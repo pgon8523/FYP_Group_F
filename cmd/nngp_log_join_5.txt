@@ -1,0 +1,1306 @@
+                                                                         QUERY PLAN                                                                         
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Merge Join  (cost=1772548.93..5666126.88 rows=10595 width=272) (actual time=3712.118..3712.267 rows=221 loops=1)
+   Merge Cond: (store_sales.store_sk = ((store.store_sk)::double precision))
+   ->  Sort  (cost=1420564.76..1420615.48 rows=20284 width=240) (actual time=3712.042..3712.071 rows=222 loops=1)
+         Sort Key: store_sales.store_sk
+         Sort Method: quicksort  Memory: 137kB
+         ->  Hash Join  (cost=880093.24..1416824.61 rows=20284 width=240) (actual time=2686.770..3711.777 rows=222 loops=1)
+               Hash Cond: ((store_sales.item_sk)::double precision = promotion.item_sk)
+               ->  Merge Join  (cost=280221.43..354060.36 rows=367615 width=160) (actual time=2664.654..3677.938 rows=35493 loops=1)
+                     Merge Cond: (((customer.customer_sk)::double precision) = store_sales.customer_sk)
+                     ->  Sort  (cost=57610.98..58783.11 rows=468852 width=28) (actual time=28.855..29.033 rows=1383 loops=1)
+                           Sort Key: ((customer.customer_sk)::double precision)
+                           Sort Method: quicksort  Memory: 157kB
+                           ->  Seq Scan on customer  (cost=0.00..2227.00 rows=468852 width=28) (actual time=0.039..28.214 rows=1383 loops=1)
+                                 Filter: ((birth_year <= '1976'::double precision) AND (birth_year >= '1976'::double precision))
+                                 Rows Removed by Filter: 98617
+                     ->  Materialize  (cost=222610.45..225260.54 rows=530018 width=132) (actual time=2635.605..3372.589 rows=2645414 loops=1)
+                           ->  Sort  (cost=222610.45..223935.49 rows=530018 width=132) (actual time=2635.596..3037.225 rows=2645414 loops=1)
+                                 Sort Key: store_sales.customer_sk
+                                 Sort Method: external merge  Disk: 381168kB
+                                 ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=530018 width=132) (actual time=0.029..701.297 rows=2709846 loops=1)
+                                       Filter: ((ext_coupon_amt <= '3192.32'::double precision) AND (ext_coupon_amt >= '0'::double precision))
+                                       Rows Removed by Filter: 170558
+               ->  Hash  (cost=598964.89..598964.89 rows=35993 width=80) (actual time=16.552..16.557 rows=90 loops=1)
+                     Buckets: 65536  Batches: 2  Memory Usage: 518kB
+                     ->  Hash Join  (cost=3576.65..598964.89 rows=35993 width=80) (actual time=10.673..16.446 rows=90 loops=1)
+                           Hash Cond: ((item.item_sk)::double precision = promotion.item_sk)
+                           ->  Seq Scan on item  (cost=0.00..456.00 rows=95419 width=52) (actual time=0.038..3.584 rows=5331 loops=1)
+                                 Filter: ((category_id <= '8'::double precision) AND (category_id >= '6'::double precision))
+                                 Rows Removed by Filter: 12669
+                           ->  Hash  (cost=7.50..7.50 rows=184572 width=28) (actual time=6.202..6.203 rows=291 loops=1)
+                                 Buckets: 65536  Batches: 4  Memory Usage: 517kB
+                                 ->  Seq Scan on promotion  (cost=0.00..7.50 rows=184572 width=28) (actual time=0.023..0.106 rows=294 loops=1)
+                                       Filter: ((cost <= '1000'::double precision) AND (cost >= '1000'::double precision))
+                                       Rows Removed by Filter: 6
+   ->  Materialize  (cost=351984.17..363448.59 rows=2292885 width=32) (actual time=0.062..0.074 rows=226 loops=1)
+         ->  Sort  (cost=351984.17..357716.38 rows=2292885 width=32) (actual time=0.058..0.059 rows=11 loops=1)
+               Sort Key: ((store.store_sk)::double precision)
+               Sort Method: quicksort  Memory: 25kB
+               ->  Seq Scan on store  (cost=0.00..30.40 rows=2292885 width=32) (actual time=0.038..0.041 rows=12 loops=1)
+                     Filter: ((devision_id <= 1) AND (devision_id >= 1))
+ Planning Time: 1415.273 ms
+ Execution Time: 3768.273 ms
+(42 rows)
+
+                                                                        QUERY PLAN                                                                        
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+ Merge Join  (cost=431014.64..732214.94 rows=1578 width=272) (actual time=900.504..900.512 rows=7 loops=1)
+   Merge Cond: (store_sales.store_sk = ((store.store_sk)::double precision))
+   ->  Sort  (cost=342639.09..342651.38 rows=4917 width=240) (actual time=900.481..900.485 rows=21 loops=1)
+         Sort Key: store_sales.store_sk
+         Sort Method: quicksort  Memory: 38kB
+         ->  Hash Join  (cost=224533.63..342337.60 rows=4917 width=240) (actual time=889.065..900.459 rows=26 loops=1)
+               Hash Cond: ((store_sales.item_sk)::double precision = promotion.item_sk)
+               ->  Merge Join  (cost=220956.98..230798.03 rows=17043 width=212) (actual time=876.666..887.256 rows=1522 loops=1)
+                     Merge Cond: (store_sales.customer_sk = ((customer.customer_sk)::double precision))
+                     ->  Sort  (cost=144800.62..144888.20 rows=35034 width=184) (actual time=860.432..860.826 rows=4687 loops=1)
+                           Sort Key: store_sales.customer_sk
+                           Sort Method: quicksort  Memory: 1451kB
+                           ->  Hash Join  (cost=5631.36..139041.14 rows=35034 width=184) (actual time=66.519..857.469 rows=4741 loops=1)
+                                 Hash Cond: (store_sales.wholesale_cost = item.wholesale_cost)
+                                 ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=90572 width=132) (actual time=0.040..708.543 rows=125042 loops=1)
+                                       Filter: ((net_paid_inc_tax <= '4201.42'::double precision) AND (net_paid_inc_tax >= '3399.05'::double precision))
+                                       Rows Removed by Filter: 2755362
+                                 ->  Hash  (cost=456.00..456.00 rows=232429 width=52) (actual time=40.482..40.483 rows=5429 loops=1)
+                                       Buckets: 65536  Batches: 8  Memory Usage: 573kB
+                                       ->  Seq Scan on item  (cost=0.00..456.00 rows=232429 width=52) (actual time=0.008..5.453 rows=5437 loops=1)
+                                             Filter: ((category_id <= '6'::double precision) AND (category_id >= '4'::double precision))
+                                             Rows Removed by Filter: 12563
+                     ->  Materialize  (cost=76156.36..79234.50 rows=615628 width=28) (actual time=16.223..21.766 rows=32676 loops=1)
+                           ->  Sort  (cost=76156.36..77695.43 rows=615628 width=28) (actual time=16.219..17.639 rows=32410 loops=1)
+                                 Sort Key: ((customer.customer_sk)::double precision)
+                                 Sort Method: quicksort  Memory: 3301kB
+                                 ->  Seq Scan on customer  (cost=0.00..2227.00 rows=615628 width=28) (actual time=0.019..11.266 rows=32414 loops=1)
+                                       Filter: ((birth_month <= '6'::double precision) AND (birth_month >= '3'::double precision))
+                                       Rows Removed by Filter: 67586
+               ->  Hash  (cost=7.50..7.50 rows=184572 width=28) (actual time=5.869..5.869 rows=291 loops=1)
+                     Buckets: 65536  Batches: 4  Memory Usage: 517kB
+                     ->  Seq Scan on promotion  (cost=0.00..7.50 rows=184572 width=28) (actual time=0.021..0.131 rows=294 loops=1)
+                           Filter: ((cost <= '1000'::double precision) AND (cost >= '1000'::double precision))
+                           Rows Removed by Filter: 6
+   ->  Materialize  (cost=88375.55..92017.22 rows=728333 width=32) (actual time=0.015..0.016 rows=1 loops=1)
+         ->  Sort  (cost=88375.55..90196.39 rows=728333 width=32) (actual time=0.014..0.014 rows=1 loops=1)
+               Sort Key: ((store.store_sk)::double precision)
+               Sort Method: quicksort  Memory: 25kB
+               ->  Seq Scan on store  (cost=0.00..30.40 rows=728333 width=32) (actual time=0.009..0.010 rows=1 loops=1)
+                     Filter: ((company_id <= 811) AND (company_id >= 811))
+                     Rows Removed by Filter: 11
+ Planning Time: 358.031 ms
+ Execution Time: 900.881 ms
+(43 rows)
+
+                                                                       QUERY PLAN                                                                       
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+ Hash Join  (cost=244982.83..251133.62 rows=1118 width=272) (actual time=699.376..713.692 rows=587 loops=1)
+   Hash Cond: ((customer.customer_sk)::double precision = store_sales.customer_sk)
+   ->  Seq Scan on customer  (cost=0.00..2227.00 rows=516794 width=28) (actual time=0.012..10.149 rows=41641 loops=1)
+         Filter: ((birth_day <= '14'::double precision) AND (birth_day >= '2'::double precision))
+         Rows Removed by Filter: 58359
+   ->  Hash  (cost=244975.54..244975.54 rows=583 width=244) (actual time=699.349..699.353 rows=1401 loops=1)
+         Buckets: 2048 (originally 1024)  Batches: 1 (originally 1)  Memory Usage: 410kB
+         ->  Merge Join  (cost=198984.87..244975.54 rows=583 width=244) (actual time=697.413..698.778 rows=1425 loops=1)
+               Merge Cond: (store_sales.store_sk = ((store.store_sk)::double precision))
+               ->  Sort  (cost=155012.84..155016.41 rows=1429 width=212) (actual time=697.219..697.669 rows=4403 loops=1)
+                     Sort Key: store_sales.store_sk
+                     Sort Method: quicksort  Memory: 1390kB
+                     ->  Hash Join  (cost=54473.99..154937.95 rows=1429 width=212) (actual time=5.456..694.349 rows=4509 loops=1)
+                           Hash Cond: (store_sales.item_sk = item.item_sk)
+                           ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=141798 width=132) (actual time=0.019..611.416 rows=1023065 loops=1)
+                                 Filter: ((net_paid_inc_tax <= '5476.76'::double precision) AND (net_paid_inc_tax >= '1107.71'::double precision))
+                                 Rows Removed by Filter: 1857339
+                           ->  Hash  (cost=54445.58..54445.58 rows=2273 width=80) (actual time=5.058..5.061 rows=61 loops=1)
+                                 Buckets: 4096  Batches: 1  Memory Usage: 40kB
+                                 ->  Hash Join  (cost=31.60..54445.58 rows=2273 width=80) (actual time=0.071..5.036 rows=61 loops=1)
+                                       Hash Cond: ((item.item_sk)::double precision = promotion.item_sk)
+                                       ->  Seq Scan on item  (cost=0.00..456.00 rows=747254 width=52) (actual time=0.005..3.222 rows=16144 loops=1)
+                                             Filter: ((category_id <= '9'::double precision) AND (category_id >= '1'::double precision))
+                                             Rows Removed by Filter: 1856
+                                       ->  Hash  (cost=7.50..7.50 rows=1928 width=28) (actual time=0.051..0.051 rows=72 loops=1)
+                                             Buckets: 2048  Batches: 1  Memory Usage: 21kB
+                                             ->  Seq Scan on promotion  (cost=0.00..7.50 rows=1928 width=28) (actual time=0.008..0.036 rows=74 loops=1)
+                                                   Filter: ((promo_sk <= 108) AND (promo_sk >= 35))
+                                                   Rows Removed by Filter: 226
+               ->  Materialize  (cost=43972.03..45857.05 rows=377005 width=32) (actual time=0.026..0.090 rows=1428 loops=1)
+                     ->  Sort  (cost=43972.03..44914.54 rows=377005 width=32) (actual time=0.022..0.023 rows=5 loops=1)
+                           Sort Key: ((store.store_sk)::double precision)
+                           Sort Method: quicksort  Memory: 25kB
+                           ->  Seq Scan on store  (cost=0.00..30.40 rows=377005 width=32) (actual time=0.009..0.011 rows=6 loops=1)
+                                 Filter: ((market_id <= 8) AND (market_id >= 6))
+                                 Rows Removed by Filter: 6
+ Planning Time: 541.004 ms
+ Execution Time: 713.807 ms
+(38 rows)
+
+                                                                         QUERY PLAN                                                                         
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Hash Join  (cost=297167.56..316992.78 rows=797 width=272) (actual time=872.106..916.566 rows=23406 loops=1)
+   Hash Cond: ((customer.customer_sk)::double precision = store_sales.customer_sk)
+   ->  Seq Scan on customer  (cost=0.00..2227.00 rows=3503873 width=28) (actual time=0.015..12.638 rows=96539 loops=1)
+         Filter: ((birth_day <= '31'::double precision) AND (birth_day >= '1'::double precision))
+         Rows Removed by Filter: 3461
+   ->  Hash  (cost=297165.79..297165.79 rows=142 width=244) (actual time=870.158..870.166 rows=24297 loops=1)
+         Buckets: 16384 (originally 1024)  Batches: 2 (originally 1)  Memory Usage: 3969kB
+         ->  Hash Join  (cost=151240.43..297165.79 rows=142 width=244) (actual time=828.872..853.776 rows=24435 loops=1)
+               Hash Cond: (store_sales.store_sk = (store.store_sk)::double precision)
+               ->  Hash Join  (cost=120091.20..121557.69 rows=278 width=212) (actual time=818.783..835.345 rows=30149 loops=1)
+                     Hash Cond: (item.wholesale_cost = store_sales.wholesale_cost)
+                     ->  Seq Scan on item  (cost=0.00..456.00 rows=102441 width=52) (actual time=0.008..2.246 rows=11081 loops=1)
+                           Filter: ((current_price <= '7.56'::double precision) AND (current_price >= '1.18'::double precision))
+                           Rows Removed by Filter: 6919
+                     ->  Hash  (cost=120076.65..120076.65 rows=1164 width=160) (actual time=816.557..816.561 rows=24502 loops=1)
+                           Buckets: 32768 (originally 2048)  Batches: 2 (originally 1)  Memory Usage: 3841kB
+                           ->  Hash Join  (cost=35.42..120076.65 rows=1164 width=160) (actual time=0.112..801.619 rows=25133 loops=1)
+                                 Hash Cond: ((store_sales.item_sk)::double precision = promotion.item_sk)
+                                 ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=245980 width=132) (actual time=0.031..614.407 rows=2092938 loops=1)
+                                       Filter: ((ext_tax <= '98.48'::double precision) AND (ext_tax >= '0'::double precision))
+                                       Rows Removed by Filter: 787466
+                                 ->  Hash  (cost=7.50..7.50 rows=2234 width=28) (actual time=0.064..0.064 rows=166 loops=1)
+                                       Buckets: 4096  Batches: 1  Memory Usage: 43kB
+                                       ->  Seq Scan on promotion  (cost=0.00..7.50 rows=2234 width=28) (actual time=0.008..0.040 rows=168 loops=1)
+                                             Filter: ((promo_sk <= 194) AND (promo_sk >= 27))
+                                             Rows Removed by Filter: 132
+               ->  Hash  (cost=30.40..30.40 rows=1609346 width=32) (actual time=10.003..10.004 rows=9 loops=1)
+                     Buckets: 65536  Batches: 32  Memory Usage: 513kB
+                     ->  Seq Scan on store  (cost=0.00..30.40 rows=1609346 width=32) (actual time=0.004..0.011 rows=9 loops=1)
+                           Filter: ((tax_percentage <= '0.06'::double precision) AND (tax_percentage >= '0.01'::double precision))
+                           Rows Removed by Filter: 3
+ Planning Time: 345.279 ms
+ Execution Time: 917.458 ms
+(33 rows)
+
+                                                                            QUERY PLAN                                                                            
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Hash Join  (cost=905514.82..917928.84 rows=3519 width=272) (actual time=671.571..689.308 rows=3285 loops=1)
+   Hash Cond: ((customer.customer_sk)::double precision = store_sales.customer_sk)
+   ->  Seq Scan on customer  (cost=0.00..2227.00 rows=1301905 width=28) (actual time=0.016..11.370 rows=48349 loops=1)
+         Filter: ((birth_month <= '11'::double precision) AND (birth_month >= '6'::double precision))
+         Rows Removed by Filter: 51651
+   ->  Hash  (cost=905489.23..905489.23 rows=2047 width=244) (actual time=671.522..671.526 rows=6949 loops=1)
+         Buckets: 8192 (originally 2048)  Batches: 1 (originally 1)  Memory Usage: 2015kB
+         ->  Merge Join  (cost=518848.07..905489.23 rows=2047 width=244) (actual time=664.860..668.692 rows=7033 loops=1)
+               Merge Cond: (store_sales.store_sk = ((store.store_sk)::double precision))
+               ->  Sort  (cost=166863.90..166868.87 rows=1987 width=212) (actual time=664.823..665.248 rows=7034 loops=1)
+                     Sort Key: store_sales.store_sk
+                     Sort Method: quicksort  Memory: 2106kB
+                     ->  Hash Join  (cost=164531.69..166755.03 rows=1987 width=212) (actual time=654.016..661.969 rows=7203 loops=1)
+                           Hash Cond: (item.item_sk = store_sales.item_sk)
+                           ->  Seq Scan on item  (cost=0.00..456.00 rows=131214 width=52) (actual time=0.006..1.993 rows=5635 loops=1)
+                                 Filter: ((class_id <= '3'::double precision) AND (class_id >= '2'::double precision))
+                                 Rows Removed by Filter: 12365
+                           ->  Hash  (cost=164481.76..164481.76 rows=3994 width=160) (actual time=651.822..651.825 rows=23122 loops=1)
+                                 Buckets: 32768 (originally 4096)  Batches: 2 (originally 1)  Memory Usage: 3841kB
+                                 ->  Hash Join  (cost=45.99..164481.76 rows=3994 width=160) (actual time=0.129..637.988 rows=23122 loops=1)
+                                       Hash Cond: ((store_sales.item_sk)::double precision = promotion.item_sk)
+                                       ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=583574 width=132) (actual time=0.028..496.361 rows=1539835 loops=1)
+                                             Filter: ((quantity <= '73'::double precision) AND (quantity >= '18'::double precision))
+                                             Rows Removed by Filter: 1340569
+                                       ->  Hash  (cost=7.50..7.50 rows=3079 width=28) (actual time=0.083..0.084 rows=207 loops=1)
+                                             Buckets: 4096  Batches: 1  Memory Usage: 45kB
+                                             ->  Seq Scan on promotion  (cost=0.00..7.50 rows=3079 width=28) (actual time=0.011..0.048 rows=212 loops=1)
+                                                   Filter: ((promo_sk <= 280) AND (promo_sk >= 69))
+                                                   Rows Removed by Filter: 88
+               ->  Materialize  (cost=351984.17..363448.59 rows=2292885 width=32) (actual time=0.029..0.336 rows=7038 loops=1)
+                     ->  Sort  (cost=351984.17..357716.38 rows=2292885 width=32) (actual time=0.026..0.028 rows=11 loops=1)
+                           Sort Key: ((store.store_sk)::double precision)
+                           Sort Method: quicksort  Memory: 25kB
+                           ->  Seq Scan on store  (cost=0.00..30.40 rows=2292885 width=32) (actual time=0.009..0.011 rows=12 loops=1)
+                                 Filter: ((devision_id <= 1) AND (devision_id >= 1))
+ Planning Time: 395.234 ms
+ Execution Time: 689.542 ms
+(37 rows)
+
+                                                                            QUERY PLAN                                                                             
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Merge Join  (cost=2007965.90..5350279.19 rows=17566 width=272) (actual time=1548.301..1566.180 rows=26068 loops=1)
+   Merge Cond: (store_sales.store_sk = ((store.store_sk)::double precision))
+   ->  Sort  (cost=1775805.15..1775869.94 rows=25915 width=240) (actual time=1548.268..1553.163 rows=31221 loops=1)
+         Sort Key: store_sales.store_sk
+         Sort Method: external merge  Disk: 8168kB
+         ->  Hash Join  (cost=576184.54..1770979.36 rows=25915 width=240) (actual time=1462.894..1524.969 rows=31388 loops=1)
+               Hash Cond: ((promotion.promo_sk)::double precision = store_sales.promo_sk)
+               ->  Seq Scan on promotion  (cost=0.00..7.50 rows=184572 width=28) (actual time=0.016..0.083 rows=294 loops=1)
+                     Filter: ((cost <= '1000'::double precision) AND (cost >= '1000'::double precision))
+                     Rows Removed by Filter: 6
+               ->  Hash  (cost=571084.53..571084.53 rows=122001 width=212) (actual time=1462.842..1462.845 rows=31944 loops=1)
+                     Buckets: 16384  Batches: 8  Memory Usage: 1263kB
+                     ->  Merge Join  (cost=536171.43..571084.53 rows=122001 width=212) (actual time=1358.097..1433.068 rows=32364 loops=1)
+                           Merge Cond: (store_sales.customer_sk = ((customer.customer_sk)::double precision))
+                           ->  Sort  (cost=466943.59..467456.67 rows=205232 width=184) (actual time=1345.811..1387.397 rows=204721 loops=1)
+                                 Sort Key: store_sales.customer_sk
+                                 Sort Method: external merge  Disk: 41000kB
+                                 ->  Hash Join  (cost=2689.44..430596.57 rows=205232 width=184) (actual time=8.093..1203.307 rows=209661 loops=1)
+                                       Hash Cond: (store_sales.wholesale_cost = item.wholesale_cost)
+                                       ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=1486856 width=132) (actual time=0.027..445.544 rows=1400940 loops=1)
+                                             Filter: ((item_sk <= 16022) AND (item_sk >= 7272))
+                                             Rows Removed by Filter: 1479464
+                                       ->  Hash  (cost=456.00..456.00 rows=100275 width=52) (actual time=7.693..7.694 rows=2074 loops=1)
+                                             Buckets: 65536  Batches: 4  Memory Usage: 551kB
+                                             ->  Seq Scan on item  (cost=0.00..456.00 rows=100275 width=52) (actual time=0.006..2.008 rows=2075 loops=1)
+                                                   Filter: ((current_price <= '2.66'::double precision) AND (current_price >= '1.72'::double precision))
+                                                   Rows Removed by Filter: 15925
+                           ->  Materialize  (cost=69227.84..72033.13 rows=561058 width=28) (actual time=12.268..16.611 rows=42930 loops=1)
+                                 ->  Sort  (cost=69227.84..70630.49 rows=561058 width=28) (actual time=12.265..13.182 rows=16056 loops=1)
+                                       Sort Key: ((customer.customer_sk)::double precision)
+                                       Sort Method: quicksort  Memory: 1639kB
+                                       ->  Seq Scan on customer  (cost=0.00..2227.00 rows=561058 width=28) (actual time=0.019..10.135 rows=16056 loops=1)
+                                             Filter: ((birth_month <= '7'::double precision) AND (birth_month >= '6'::double precision))
+                                             Rows Removed by Filter: 83944
+   ->  Materialize  (cost=232160.75..239866.01 rows=1541052 width=32) (actual time=0.024..1.174 rows=26072 loops=1)
+         ->  Sort  (cost=232160.75..236013.38 rows=1541052 width=32) (actual time=0.023..0.024 rows=9 loops=1)
+               Sort Key: ((store.store_sk)::double precision)
+               Sort Method: quicksort  Memory: 25kB
+               ->  Seq Scan on store  (cost=0.00..30.40 rows=1541052 width=32) (actual time=0.012..0.015 rows=10 loops=1)
+                     Filter: ((market_id <= 8) AND (market_id >= 2))
+                     Rows Removed by Filter: 2
+ Planning Time: 357.883 ms
+ Execution Time: 1575.343 ms
+(43 rows)
+
+                                                                     QUERY PLAN                                                                      
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+ Hash Join  (cost=126043.08..144355.01 rows=24 width=272) (actual time=563.949..575.306 rows=23 loops=1)
+   Hash Cond: (store_sales.store_sk = (store.store_sk)::double precision)
+   ->  Hash Join  (cost=120271.18..128491.18 rows=91 width=240) (actual time=560.288..572.403 rows=121 loops=1)
+         Hash Cond: ((customer.customer_sk)::double precision = store_sales.customer_sk)
+         ->  Seq Scan on customer  (cost=0.00..2227.00 rows=791739 width=28) (actual time=0.008..10.024 rows=23974 loops=1)
+               Filter: ((birth_month <= '11'::double precision) AND (birth_month >= '9'::double precision))
+               Rows Removed by Filter: 76026
+         ->  Hash  (cost=120265.71..120265.71 rows=437 width=212) (actual time=560.100..560.103 rows=486 loops=1)
+               Buckets: 1024  Batches: 1  Memory Usage: 130kB
+               ->  Hash Join  (cost=5650.95..120265.71 rows=437 width=212) (actual time=40.243..559.829 rows=503 loops=1)
+                     Hash Cond: ((store_sales.item_sk)::double precision = promotion.item_sk)
+                     ->  Hash Join  (cost=2074.30..111360.24 rows=650 width=184) (actual time=5.222..527.721 rows=24698 loops=1)
+                           Hash Cond: (store_sales.item_sk = item.item_sk)
+                           ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=106049 width=132) (actual time=0.030..429.791 rows=203530 loops=1)
+                                 Filter: ((list_price <= '11.95'::double precision) AND (list_price >= '-1'::double precision))
+                                 Rows Removed by Filter: 2676874
+                           ->  Hash  (cost=456.00..456.00 rows=72664 width=52) (actual time=5.110..5.111 rows=2195 loops=1)
+                                 Buckets: 65536  Batches: 2  Memory Usage: 609kB
+                                 ->  Seq Scan on item  (cost=0.00..456.00 rows=72664 width=52) (actual time=0.009..2.249 rows=2195 loops=1)
+                                       Filter: ((brand_id <= '10005003'::double precision) AND (brand_id >= '9001006'::double precision))
+                                       Rows Removed by Filter: 15805
+                     ->  Hash  (cost=7.50..7.50 rows=184572 width=28) (actual time=7.389..7.390 rows=291 loops=1)
+                           Buckets: 65536  Batches: 4  Memory Usage: 517kB
+                           ->  Seq Scan on promotion  (cost=0.00..7.50 rows=184572 width=28) (actual time=0.007..0.072 rows=294 loops=1)
+                                 Filter: ((cost <= '1000'::double precision) AND (cost >= '1000'::double precision))
+                                 Rows Removed by Filter: 6
+   ->  Hash  (cost=30.40..30.40 rows=296920 width=32) (actual time=2.750..2.750 rows=2 loops=1)
+         Buckets: 65536  Batches: 8  Memory Usage: 513kB
+         ->  Seq Scan on store  (cost=0.00..30.40 rows=296920 width=32) (actual time=0.014..0.016 rows=2 loops=1)
+               Filter: ((floor_space <= 9026222) AND (floor_space >= 8954883))
+               Rows Removed by Filter: 10
+ Planning Time: 388.726 ms
+ Execution Time: 575.384 ms
+(33 rows)
+
+                                                                        QUERY PLAN                                                                         
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+ Hash Join  (cost=156084.09..209268.28 rows=41 width=272) (actual time=564.020..574.952 rows=6 loops=1)
+   Hash Cond: (store_sales.store_sk = (store.store_sk)::double precision)
+   ->  Hash Join  (cost=111717.63..117283.93 rows=47 width=240) (actual time=549.111..559.738 rows=6 loops=1)
+         Hash Cond: ((customer.customer_sk)::double precision = store_sales.customer_sk)
+         ->  Seq Scan on customer  (cost=0.00..2227.00 rows=666644 width=28) (actual time=0.009..10.401 rows=44338 loops=1)
+               Filter: ((birth_day <= '24'::double precision) AND (birth_day >= '11'::double precision))
+               Rows Removed by Filter: 55662
+         ->  Hash  (cost=111716.91..111716.91 rows=57 width=212) (actual time=545.802..545.804 rows=17 loops=1)
+               Buckets: 1024  Batches: 1  Memory Usage: 13kB
+               ->  Hash Join  (cost=110721.89..111716.91 rows=57 width=212) (actual time=543.722..545.794 rows=17 loops=1)
+                     Hash Cond: (item.wholesale_cost = store_sales.wholesale_cost)
+                     ->  Seq Scan on item  (cost=0.00..456.00 rows=102943 width=52) (actual time=0.005..1.644 rows=4960 loops=1)
+                           Filter: ((current_price <= '3.04'::double precision) AND (current_price >= '0.79'::double precision))
+                           Rows Removed by Filter: 13040
+                     ->  Hash  (cost=110718.81..110718.81 rows=247 width=160) (actual time=543.671..543.673 rows=4210 loops=1)
+                           Buckets: 8192 (originally 1024)  Batches: 1 (originally 1)  Memory Usage: 881kB
+                           ->  Hash Join  (cost=28.08..110718.81 rows=247 width=160) (actual time=0.841..541.596 rows=4316 loops=1)
+                                 Hash Cond: ((store_sales.item_sk)::double precision = promotion.item_sk)
+                                 ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=174321 width=132) (actual time=0.036..481.800 rows=636859 loops=1)
+                                       Filter: ((list_price <= '129.54'::double precision) AND (list_price >= '90.58'::double precision))
+                                       Rows Removed by Filter: 2243545
+                                 ->  Hash  (cost=7.50..7.50 rows=1646 width=28) (actual time=0.049..0.050 rows=93 loops=1)
+                                       Buckets: 2048  Batches: 1  Memory Usage: 22kB
+                                       ->  Seq Scan on promotion  (cost=0.00..7.50 rows=1646 width=28) (actual time=0.010..0.035 rows=95 loops=1)
+                                             Filter: ((promo_sk <= 162) AND (promo_sk >= 68))
+                                             Rows Removed by Filter: 205
+   ->  Hash  (cost=30.40..30.40 rows=2292885 width=32) (actual time=14.829..14.830 rows=12 loops=1)
+         Buckets: 65536  Batches: 64  Memory Usage: 513kB
+         ->  Seq Scan on store  (cost=0.00..30.40 rows=2292885 width=32) (actual time=0.013..0.019 rows=12 loops=1)
+               Filter: ((devision_id <= 1) AND (devision_id >= 1))
+ Planning Time: 396.917 ms
+ Execution Time: 575.031 ms
+(32 rows)
+
+                                                                    QUERY PLAN                                                                     
+---------------------------------------------------------------------------------------------------------------------------------------------------
+ Hash Join  (cost=142676.64..149764.60 rows=73 width=272) (actual time=632.517..648.133 rows=295 loops=1)
+   Hash Cond: ((customer.customer_sk)::double precision = store_sales.customer_sk)
+   ->  Seq Scan on customer  (cost=0.00..2227.00 rows=970396 width=28) (actual time=0.026..11.073 rows=48928 loops=1)
+         Filter: ((birth_month <= '8'::double precision) AND (birth_month >= '3'::double precision))
+         Rows Removed by Filter: 51072
+   ->  Hash  (cost=142675.91..142675.91 rows=58 width=244) (actual time=632.385..632.389 rows=590 loops=1)
+         Buckets: 1024  Batches: 1  Memory Usage: 174kB
+         ->  Hash Join  (cost=26500.77..142675.91 rows=58 width=244) (actual time=16.356..631.890 rows=600 loops=1)
+               Hash Cond: (store_sales.store_sk = (store.store_sk)::double precision)
+               ->  Hash Join  (cost=8284.30..108477.73 rows=34 width=212) (actual time=3.843..618.625 rows=919 loops=1)
+                     Hash Cond: (store_sales.item_sk = item.item_sk)
+                     ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=111358 width=132) (actual time=0.029..585.432 rows=397155 loops=1)
+                           Filter: ((net_profit <= '116.82'::double precision) AND (net_profit >= '-72.52'::double precision))
+                           Rows Removed by Filter: 2483249
+                     ->  Hash  (cost=8279.73..8279.73 rows=366 width=80) (actual time=2.909..2.911 rows=33 loops=1)
+                           Buckets: 1024  Batches: 1  Memory Usage: 12kB
+                           ->  Hash Join  (cost=30.59..8279.73 rows=366 width=80) (actual time=0.116..2.897 rows=33 loops=1)
+                                 Hash Cond: ((item.item_sk)::double precision = promotion.item_sk)
+                                 ->  Seq Scan on item  (cost=0.00..456.00 rows=112148 width=52) (actual time=0.005..2.261 rows=5152 loops=1)
+                                       Filter: ((current_price <= '35.27'::double precision) AND (current_price >= '5.78'::double precision))
+                                       Rows Removed by Filter: 12848
+                                 ->  Hash  (cost=7.50..7.50 rows=1847 width=28) (actual time=0.057..0.058 rows=128 loops=1)
+                                       Buckets: 2048  Batches: 1  Memory Usage: 24kB
+                                       ->  Seq Scan on promotion  (cost=0.00..7.50 rows=1847 width=28) (actual time=0.009..0.039 rows=130 loops=1)
+                                             Filter: ((promo_sk <= 168) AND (promo_sk >= 39))
+                                             Rows Removed by Filter: 170
+               ->  Hash  (cost=30.40..30.40 rows=940485 width=32) (actual time=12.435..12.435 rows=9 loops=1)
+                     Buckets: 65536  Batches: 32  Memory Usage: 513kB
+                     ->  Seq Scan on store  (cost=0.00..30.40 rows=940485 width=32) (actual time=0.005..0.010 rows=9 loops=1)
+                           Filter: ((market_id <= 10) AND (market_id >= 4))
+                           Rows Removed by Filter: 3
+ Planning Time: 352.562 ms
+ Execution Time: 648.221 ms
+(33 rows)
+
+                                                                            QUERY PLAN                                                                            
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Merge Join  (cost=2953776.34..3487248.31 rows=2723 width=272) (actual time=5246.803..5411.086 rows=241708 loops=1)
+   Merge Cond: (store_sales.store_sk = ((store.store_sk)::double precision))
+   ->  Sort  (cost=2902405.83..2902442.30 rows=14587 width=240) (actual time=5150.310..5264.286 rows=604061 loops=1)
+         Sort Key: store_sales.store_sk
+         Sort Method: external merge  Disk: 189608kB
+         ->  Merge Join  (cost=2832583.49..2901396.93 rows=14587 width=240) (actual time=3871.096..4417.668 rows=729999 loops=1)
+               Merge Cond: (store_sales.customer_sk = ((customer.customer_sk)::double precision))
+               ->  Sort  (cost=2281805.40..2281955.26 rows=59945 width=212) (actual time=3829.794..4003.989 rows=756246 loops=1)
+                     Sort Key: store_sales.customer_sk
+                     Sort Method: external merge  Disk: 174472kB
+                     ->  Merge Join  (cost=779193.37..2270898.84 rows=59945 width=212) (actual time=2050.046..2997.200 rows=765584 loops=1)
+                           Merge Cond: (((promotion.promo_sk)::double precision) = store_sales.promo_sk)
+                           ->  Sort  (cost=629769.53..629984.48 rows=85980 width=80) (actual time=20.811..20.862 rows=109 loops=1)
+                                 Sort Key: ((promotion.promo_sk)::double precision)
+                                 Sort Method: quicksort  Memory: 40kB
+                                 ->  Hash Join  (cost=3576.65..618900.69 rows=85980 width=80) (actual time=15.070..20.756 rows=109 loops=1)
+                                       Hash Cond: ((item.item_sk)::double precision = promotion.item_sk)
+                                       ->  Seq Scan on item  (cost=0.00..456.00 rows=98623 width=52) (actual time=0.015..2.492 rows=7118 loops=1)
+                                             Filter: ((current_price <= '6.37'::double precision) AND (current_price >= '2.4'::double precision))
+                                             Rows Removed by Filter: 10882
+                                       ->  Hash  (cost=7.50..7.50 rows=184572 width=28) (actual time=7.676..7.678 rows=291 loops=1)
+                                             Buckets: 65536  Batches: 4  Memory Usage: 517kB
+                                             ->  Seq Scan on promotion  (cost=0.00..7.50 rows=184572 width=28) (actual time=0.006..0.064 rows=294 loops=1)
+                                                   Filter: ((cost <= '1000'::double precision) AND (cost >= '1000'::double precision))
+                                                   Rows Removed by Filter: 6
+                           ->  Materialize  (cost=149423.85..150979.90 rows=311211 width=132) (actual time=2021.183..2609.536 rows=2096577 loops=1)
+                                 ->  Sort  (cost=149423.85..150201.87 rows=311211 width=132) (actual time=2021.176..2350.670 rows=2096577 loops=1)
+                                       Sort Key: store_sales.promo_sk
+                                       Sort Method: external merge  Disk: 302648kB
+                                       ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=311211 width=132) (actual time=0.025..629.037 rows=2154557 loops=1)
+                                             Filter: ((net_paid <= '5642.28'::double precision) AND (net_paid >= '103.2'::double precision))
+                                             Rows Removed by Filter: 725847
+               ->  Materialize  (cost=550778.09..568297.45 rows=3503873 width=28) (actual time=41.287..96.045 rows=739558 loops=1)
+                     ->  Sort  (cost=550778.09..559537.77 rows=3503873 width=28) (actual time=41.282..52.971 rows=96539 loops=1)
+                           Sort Key: ((customer.customer_sk)::double precision)
+                           Sort Method: external merge  Disk: 4712kB
+                           ->  Seq Scan on customer  (cost=0.00..2227.00 rows=3503873 width=28) (actual time=0.021..15.921 rows=96539 loops=1)
+                                 Filter: ((birth_day <= '31'::double precision) AND (birth_day >= '1'::double precision))
+                                 Rows Removed by Filter: 3461
+   ->  Materialize  (cost=51370.51..53553.12 rows=436521 width=32) (actual time=0.038..10.642 rows=241711 loops=1)
+         ->  Sort  (cost=51370.51..52461.82 rows=436521 width=32) (actual time=0.035..0.039 rows=5 loops=1)
+               Sort Key: ((store.store_sk)::double precision)
+               Sort Method: quicksort  Memory: 25kB
+               ->  Seq Scan on store  (cost=0.00..30.40 rows=436521 width=32) (actual time=0.020..0.023 rows=5 loops=1)
+                     Filter: ((floor_space <= 9026222) AND (floor_space >= 6995995))
+                     Rows Removed by Filter: 7
+ Planning Time: 429.053 ms
+ Execution Time: 5517.177 ms
+(48 rows)
+
+                                                                              QUERY PLAN                                                                              
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Merge Join  (cost=1482451.41..1851103.55 rows=4403 width=272) (actual time=1306.333..1377.202 rows=101700 loops=1)
+   Merge Cond: (store_sales.store_sk = ((store.store_sk)::double precision))
+   ->  Sort  (cost=763185.23..763187.59 rows=942 width=240) (actual time=1306.287..1326.330 rows=101701 loops=1)
+         Sort Key: store_sales.store_sk
+         Sort Method: external merge  Disk: 26640kB
+         ->  Hash Join  (cost=738552.51..763138.73 rows=942 width=240) (actual time=1164.350..1240.972 rows=102369 loops=1)
+               Hash Cond: ((item.item_sk)::double precision = promotion.item_sk)
+               ->  Seq Scan on item  (cost=0.00..456.00 rows=165879 width=52) (actual time=0.016..2.471 rows=13846 loops=1)
+                     Filter: ((wholesale_cost <= '4.78'::double precision) AND (wholesale_cost >= '0.06'::double precision))
+                     Rows Removed by Filter: 4154
+               ->  Hash  (cost=738500.20..738500.20 rows=4185 width=188) (actual time=1128.541..1128.545 rows=131472 loops=1)
+                     Buckets: 32768 (originally 8192)  Batches: 16 (originally 1)  Memory Usage: 3841kB
+                     ->  Merge Join  (cost=206482.26..738500.20 rows=4185 width=188) (actual time=889.538..981.169 rows=132365 loops=1)
+                           Merge Cond: (store_sales.promo_sk = ((promotion.promo_sk)::double precision))
+                           ->  Sort  (cost=184122.39..184241.82 rows=47772 width=160) (actual time=889.419..917.074 rows=135609 loops=1)
+                                 Sort Key: store_sales.promo_sk
+                                 Sort Method: external merge  Disk: 23792kB
+                                 ->  Merge Join  (cost=166752.50..176650.56 rows=47772 width=160) (actual time=659.054..806.050 rows=137239 loops=1)
+                                       Merge Cond: (store_sales.customer_sk = ((customer.customer_sk)::double precision))
+                                       ->  Sort  (cost=109141.11..109299.56 rows=63378 width=132) (actual time=640.874..706.247 rows=349809 loops=1)
+                                             Sort Key: store_sales.customer_sk
+                                             Sort Method: external merge  Disk: 50384kB
+                                             ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=63378 width=132) (actual time=0.028..437.474 rows=358246 loops=1)
+                                                   Filter: ((quantity <= '99'::double precision) AND (quantity >= '87'::double precision))
+                                                   Rows Removed by Filter: 2522158
+                                       ->  Materialize  (cost=57611.39..59955.67 rows=468856 width=28) (actual time=18.170..30.603 rows=143294 loops=1)
+                                             ->  Sort  (cost=57611.39..58783.53 rows=468856 width=28) (actual time=18.166..20.127 rows=39066 loops=1)
+                                                   Sort Key: ((customer.customer_sk)::double precision)
+                                                   Sort Method: quicksort  Memory: 3998kB
+                                                   ->  Seq Scan on customer  (cost=0.00..2227.00 rows=468856 width=28) (actual time=0.017..12.086 rows=39066 loops=1)
+                                                         Filter: ((birth_year <= '1966'::double precision) AND (birth_year >= '1939'::double precision))
+                                                         Rows Removed by Filter: 60934
+                           ->  Materialize  (cost=22359.87..23358.05 rows=199635 width=28) (actual time=0.115..6.843 rows=131904 loops=1)
+                                 ->  Sort  (cost=22359.87..22858.96 rows=199635 width=28) (actual time=0.113..0.157 rows=293 loops=1)
+                                       Sort Key: ((promotion.promo_sk)::double precision)
+                                       Sort Method: quicksort  Memory: 47kB
+                                       ->  Seq Scan on promotion  (cost=0.00..7.50 rows=199635 width=28) (actual time=0.018..0.065 rows=293 loops=1)
+                                             Filter: ((response_target <= '1'::double precision) AND (response_target >= '1'::double precision))
+                                             Rows Removed by Filter: 7
+   ->  Materialize  (cost=719266.18..741966.05 rows=4539975 width=32) (actual time=0.030..4.716 rows=101705 loops=1)
+         ->  Sort  (cost=719266.18..730616.11 rows=4539975 width=32) (actual time=0.028..0.029 rows=11 loops=1)
+               Sort Key: ((store.store_sk)::double precision)
+               Sort Method: quicksort  Memory: 25kB
+               ->  Seq Scan on store  (cost=0.00..30.40 rows=4539975 width=32) (actual time=0.016..0.019 rows=12 loops=1)
+                     Filter: ((tax_percentage <= '0.11'::double precision) AND (tax_percentage >= '0.01'::double precision))
+ Planning Time: 373.523 ms
+ Execution Time: 1396.995 ms
+(47 rows)
+
+                                                                         QUERY PLAN                                                                         
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Merge Join  (cost=894897.13..2032026.25 rows=3209 width=272) (actual time=1743.625..1744.383 rows=1296 loops=1)
+   Merge Cond: (store_sales.store_sk = ((store.store_sk)::double precision))
+   ->  Sort  (cost=542912.96..542927.72 rows=5903 width=240) (actual time=1743.588..1743.676 rows=1297 loops=1)
+         Sort Key: store_sales.store_sk
+         Sort Method: quicksort  Memory: 715kB
+         ->  Hash Join  (cost=238311.83..542543.22 rows=5903 width=240) (actual time=1595.261..1742.770 rows=1308 loops=1)
+               Hash Cond: ((item.item_sk)::double precision = promotion.item_sk)
+               ->  Merge Join  (cost=234443.89..249154.22 rows=42587 width=212) (actual time=1582.852..1687.577 rows=58661 loops=1)
+                     Merge Cond: (store_sales.customer_sk = ((customer.customer_sk)::double precision))
+                     ->  Sort  (cost=173060.81..173291.30 rows=92197 width=184) (actual time=1567.879..1623.328 rows=234606 loops=1)
+                           Sort Key: store_sales.customer_sk
+                           Sort Method: external merge  Disk: 46944kB
+                           ->  Hash Join  (cost=3048.15..157264.51 rows=92197 width=184) (actual time=17.531..1367.429 rows=240222 loops=1)
+                                 Hash Cond: (store_sales.item_sk = item.item_sk)
+                                 ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=496120 width=132) (actual time=0.030..516.479 rows=1540558 loops=1)
+                                       Filter: ((quantity <= '92'::double precision) AND (quantity >= '37'::double precision))
+                                       Rows Removed by Filter: 1339846
+                                 ->  Hash  (cost=456.00..456.00 rows=116412 width=52) (actual time=10.176..10.177 rows=2813 loops=1)
+                                       Buckets: 65536  Batches: 4  Memory Usage: 578kB
+                                       ->  Seq Scan on item  (cost=0.00..456.00 rows=116412 width=52) (actual time=0.006..2.336 rows=2813 loops=1)
+                                             Filter: ((class_id <= '3'::double precision) AND (class_id >= '3'::double precision))
+                                             Rows Removed by Filter: 15187
+                     ->  Materialize  (cost=61383.08..63877.62 rows=498907 width=28) (actual time=14.953..22.512 rows=64304 loops=1)
+                           ->  Sort  (cost=61383.08..62630.35 rows=498907 width=28) (actual time=14.950..16.434 rows=25145 loops=1)
+                                 Sort Key: ((customer.customer_sk)::double precision)
+                                 Sort Method: quicksort  Memory: 2733kB
+                                 ->  Seq Scan on customer  (cost=0.00..2227.00 rows=498907 width=28) (actual time=0.020..10.711 rows=25145 loops=1)
+                                       Filter: ((birth_day <= '28'::double precision) AND (birth_day >= '21'::double precision))
+                                       Rows Removed by Filter: 74855
+               ->  Hash  (cost=7.50..7.50 rows=199635 width=28) (actual time=7.852..7.852 rows=291 loops=1)
+                     Buckets: 65536  Batches: 4  Memory Usage: 517kB
+                     ->  Seq Scan on promotion  (cost=0.00..7.50 rows=199635 width=28) (actual time=0.016..0.076 rows=293 loops=1)
+                           Filter: ((response_target <= '1'::double precision) AND (response_target >= '1'::double precision))
+                           Rows Removed by Filter: 7
+   ->  Materialize  (cost=351984.17..363448.59 rows=2292885 width=32) (actual time=0.030..0.088 rows=1301 loops=1)
+         ->  Sort  (cost=351984.17..357716.38 rows=2292885 width=32) (actual time=0.028..0.029 rows=11 loops=1)
+               Sort Key: ((store.store_sk)::double precision)
+               Sort Method: quicksort  Memory: 25kB
+               ->  Seq Scan on store  (cost=0.00..30.40 rows=2292885 width=32) (actual time=0.017..0.020 rows=12 loops=1)
+                     Filter: ((devision_id <= 1) AND (devision_id >= 1))
+ Planning Time: 379.710 ms
+ Execution Time: 1752.511 ms
+(42 rows)
+
+                                                                         QUERY PLAN                                                                         
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Merge Join  (cost=576625.97..1017298.83 rows=2592 width=272) (actual time=1767.782..1768.072 rows=372 loops=1)
+   Merge Cond: (store_sales.store_sk = ((store.store_sk)::double precision))
+   ->  Sort  (cost=376775.70..376785.49 rows=3917 width=240) (actual time=1767.726..1767.781 rows=733 loops=1)
+         Sort Key: store_sales.store_sk
+         Sort Method: quicksort  Memory: 402kB
+         ->  Hash Join  (cost=232722.67..376541.96 rows=3917 width=240) (actual time=1667.466..1767.294 rows=733 loops=1)
+               Hash Cond: ((store_sales.item_sk)::double precision = promotion.item_sk)
+               ->  Hash Join  (cost=228854.74..282108.58 rows=13183 width=212) (actual time=1642.322..1733.424 rows=34005 loops=1)
+                     Hash Cond: ((customer.customer_sk)::double precision = store_sales.customer_sk)
+                     ->  Seq Scan on customer  (cost=0.00..2227.00 rows=820235 width=28) (actual time=0.007..10.422 rows=24096 loops=1)
+                           Filter: ((birth_month <= '12'::double precision) AND (birth_month >= '10'::double precision))
+                           Rows Removed by Filter: 75904
+                     ->  Hash  (cost=228147.69..228147.69 rows=18644 width=184) (actual time=1630.842..1630.846 rows=142564 loops=1)
+                           Buckets: 32768 (originally 32768)  Batches: 16 (originally 2)  Memory Usage: 3841kB
+                           ->  Hash Join  (cost=1953.30..228147.69 rows=18644 width=184) (actual time=2.495..1503.525 rows=144325 loops=1)
+                                 Hash Cond: (store_sales.wholesale_cost = item.wholesale_cost)
+                                 ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=667610 width=132) (actual time=0.033..587.071 rows=2488161 loops=1)
+                                       Filter: ((ext_discount_amt <= '426.06'::double precision) AND (ext_discount_amt >= '0'::double precision))
+                                       Rows Removed by Filter: 392243
+                                 ->  Hash  (cost=456.00..456.00 rows=67224 width=52) (actual time=2.315..2.316 rows=682 loops=1)
+                                       Buckets: 65536  Batches: 2  Memory Usage: 542kB
+                                       ->  Seq Scan on item  (cost=0.00..456.00 rows=67224 width=52) (actual time=0.008..2.100 rows=683 loops=1)
+                                             Filter: ((brand_id <= '8016001'::double precision) AND (brand_id >= '8009010'::double precision))
+                                             Rows Removed by Filter: 17317
+               ->  Hash  (cost=7.50..7.50 rows=199635 width=28) (actual time=7.702..7.702 rows=291 loops=1)
+                     Buckets: 65536  Batches: 4  Memory Usage: 517kB
+                     ->  Seq Scan on promotion  (cost=0.00..7.50 rows=199635 width=28) (actual time=0.016..0.077 rows=293 loops=1)
+                           Filter: ((response_target <= '1'::double precision) AND (response_target >= '1'::double precision))
+                           Rows Removed by Filter: 7
+   ->  Materialize  (cost=199850.28..206528.82 rows=1335709 width=32) (actual time=0.042..0.060 rows=375 loops=1)
+         ->  Sort  (cost=199850.28..203189.55 rows=1335709 width=32) (actual time=0.040..0.040 rows=6 loops=1)
+               Sort Key: ((store.store_sk)::double precision)
+               Sort Method: quicksort  Memory: 25kB
+               ->  Seq Scan on store  (cost=0.00..30.40 rows=1335709 width=32) (actual time=0.018..0.021 rows=7 loops=1)
+                     Filter: ((market_id <= 7) AND (market_id >= 2))
+                     Rows Removed by Filter: 5
+ Planning Time: 376.027 ms
+ Execution Time: 1768.176 ms
+(38 rows)
+
+                                                                               QUERY PLAN                                                                               
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Hash Join  (cost=3635750.30..3757122.44 rows=4665 width=272) (actual time=3231.130..3236.456 rows=4301 loops=1)
+   Hash Cond: ((item.item_sk)::double precision = promotion.item_sk)
+   ->  Seq Scan on item  (cost=0.00..456.00 rows=485304 width=52) (actual time=0.015..2.506 rows=14353 loops=1)
+         Filter: ((category_id <= '9'::double precision) AND (category_id >= '2'::double precision))
+         Rows Removed by Filter: 3647
+   ->  Hash  (cost=3635659.36..3635659.36 rows=7275 width=220) (actual time=3231.085..3231.090 rows=5119 loops=1)
+         Buckets: 8192  Batches: 1  Memory Usage: 1382kB
+         ->  Merge Join  (cost=2768682.27..3635659.36 rows=7275 width=220) (actual time=3225.593..3228.798 rows=5119 loops=1)
+               Merge Cond: (store_sales.store_sk = ((store.store_sk)::double precision))
+               ->  Sort  (cost=2676718.38..2676752.59 rows=13684 width=188) (actual time=3225.550..3226.053 rows=5120 loops=1)
+                     Sort Key: store_sales.store_sk
+                     Sort Method: quicksort  Memory: 3095kB
+                     ->  Hash Join  (cost=312353.66..2675778.27 rows=13684 width=188) (actual time=2033.833..3220.108 rows=10400 loops=1)
+                           Hash Cond: ((store_sales.item_sk)::double precision = promotion.item_sk)
+                           ->  Merge Join  (cost=308485.72..392178.76 rows=337403 width=160) (actual time=2028.808..2938.252 rows=479327 loops=1)
+                                 Merge Cond: (((customer.customer_sk)::double precision) = store_sales.customer_sk)
+                                 ->  Sort  (cost=51829.22..52885.75 rows=422610 width=28) (actual time=15.794..17.344 rows=22044 loops=1)
+                                       Sort Key: ((customer.customer_sk)::double precision)
+                                       Sort Method: quicksort  Memory: 2491kB
+                                       ->  Seq Scan on customer  (cost=0.00..2227.00 rows=422610 width=28) (actual time=0.007..12.219 rows=22044 loops=1)
+                                             Filter: ((birth_day <= '19'::double precision) AND (birth_day >= '13'::double precision))
+                                             Rows Removed by Filter: 77956
+                                 ->  Materialize  (cost=256656.50..260016.12 rows=671924 width=132) (actual time=2012.989..2622.873 rows=2159355 loops=1)
+                                       ->  Sort  (cost=256656.50..258336.31 rows=671924 width=132) (actual time=2012.985..2348.550 rows=2159355 loops=1)
+                                             Sort Key: store_sales.customer_sk
+                                             Sort Method: external merge  Disk: 311088kB
+                                             ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=671924 width=132) (actual time=0.028..542.467 rows=2211665 loops=1)
+                                                   Filter: ((ext_discount_amt <= '0'::double precision) AND (ext_discount_amt >= '0'::double precision))
+                                                   Rows Removed by Filter: 668739
+                           ->  Hash  (cost=7.50..7.50 rows=199635 width=28) (actual time=0.332..0.333 rows=291 loops=1)
+                                 Buckets: 65536  Batches: 4  Memory Usage: 517kB
+                                 ->  Seq Scan on promotion  (cost=0.00..7.50 rows=199635 width=28) (actual time=0.006..0.062 rows=293 loops=1)
+                                       Filter: ((response_target <= '1'::double precision) AND (response_target >= '1'::double precision))
+                                       Rows Removed by Filter: 7
+               ->  Materialize  (cost=91963.88..95744.96 rows=756215 width=32) (actual time=0.035..0.263 rows=5122 loops=1)
+                     ->  Sort  (cost=91963.88..93854.42 rows=756215 width=32) (actual time=0.032..0.033 rows=6 loops=1)
+                           Sort Key: ((store.store_sk)::double precision)
+                           Sort Method: quicksort  Memory: 25kB
+                           ->  Seq Scan on store  (cost=0.00..30.40 rows=756215 width=32) (actual time=0.016..0.019 rows=6 loops=1)
+                                 Filter: ((tax_percentage <= '0.03'::double precision) AND (tax_percentage >= '0.03'::double precision))
+                                 Rows Removed by Filter: 6
+ Planning Time: 369.183 ms
+ Execution Time: 3282.958 ms
+(43 rows)
+
+                                                                        QUERY PLAN                                                                         
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+ Merge Join  (cost=2188183.41..4641512.37 rows=3478 width=272) (actual time=811.023..812.052 rows=1692 loops=1)
+   Merge Cond: (store_sales.store_sk = ((store.store_sk)::double precision))
+   ->  Sort  (cost=1956603.17..1956650.82 rows=19060 width=240) (actual time=810.994..811.130 rows=2507 loops=1)
+         Sort Key: store_sales.store_sk
+         Sort Method: quicksort  Memory: 1390kB
+         ->  Hash Join  (cost=1903137.51..1953095.66 rows=19060 width=240) (actual time=793.169..809.639 rows=2537 loops=1)
+               Hash Cond: ((customer.customer_sk)::double precision = store_sales.customer_sk)
+               ->  Seq Scan on customer  (cost=0.00..2227.00 rows=701776 width=28) (actual time=0.016..9.673 rows=15766 loops=1)
+                     Filter: ((birth_month <= '12'::double precision) AND (birth_month >= '11'::double precision))
+                     Rows Removed by Filter: 84234
+               ->  Hash  (cost=1902231.80..1902231.80 rows=21657 width=212) (actual time=790.918..790.921 rows=16220 loops=1)
+                     Buckets: 16384  Batches: 2  Memory Usage: 2138kB
+                     ->  Hash Join  (cost=1089669.02..1902231.80 rows=21657 width=212) (actual time=20.167..777.986 rows=16613 loops=1)
+                           Hash Cond: ((store_sales.item_sk)::double precision = promotion.item_sk)
+                           ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=671924 width=132) (actual time=0.028..554.633 rows=2211665 loops=1)
+                                 Filter: ((ext_discount_amt <= '0'::double precision) AND (ext_discount_amt >= '0'::double precision))
+                                 Rows Removed by Filter: 668739
+                           ->  Hash  (cost=1089276.71..1089276.71 rows=31385 width=80) (actual time=20.093..20.096 rows=96 loops=1)
+                                 Buckets: 32768  Batches: 1  Memory Usage: 268kB
+                                 ->  Hash Join  (cost=3867.94..1089276.71 rows=31385 width=80) (actual time=14.794..20.063 rows=96 loops=1)
+                                       Hash Cond: ((item.item_sk)::double precision = promotion.item_sk)
+                                       ->  Seq Scan on item  (cost=0.00..456.00 rows=161074 width=52) (actual time=0.006..2.697 rows=5991 loops=1)
+                                             Filter: ((manufact_id <= '570'::double precision) AND (manufact_id >= '267'::double precision))
+                                             Rows Removed by Filter: 12009
+                                       ->  Hash  (cost=7.50..7.50 rows=199635 width=28) (actual time=7.576..7.577 rows=291 loops=1)
+                                             Buckets: 65536  Batches: 4  Memory Usage: 517kB
+                                             ->  Seq Scan on promotion  (cost=0.00..7.50 rows=199635 width=28) (actual time=0.007..0.064 rows=293 loops=1)
+                                                   Filter: ((response_target <= '1'::double precision) AND (response_target >= '1'::double precision))
+                                                   Rows Removed by Filter: 7
+   ->  Materialize  (cost=231580.24..239267.07 rows=1537365 width=32) (actual time=0.022..0.096 rows=1696 loops=1)
+         ->  Sort  (cost=231580.24..235423.66 rows=1537365 width=32) (actual time=0.019..0.020 rows=8 loops=1)
+               Sort Key: ((store.store_sk)::double precision)
+               Sort Method: quicksort  Memory: 25kB
+               ->  Seq Scan on store  (cost=0.00..30.40 rows=1537365 width=32) (actual time=0.009..0.011 rows=9 loops=1)
+                     Filter: ((number_employees <= 294) AND (number_employees >= 236))
+                     Rows Removed by Filter: 3
+ Planning Time: 414.331 ms
+ Execution Time: 812.196 ms
+(38 rows)
+
+                                                                        QUERY PLAN                                                                         
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+ Merge Join  (cost=331168.76..379712.31 rows=196 width=272) (actual time=1825.921..1826.244 rows=360 loops=1)
+   Merge Cond: (store_sales.store_sk = ((store.store_sk)::double precision))
+   ->  Sort  (cost=295343.42..295348.01 rows=1838 width=240) (actual time=1825.833..1825.910 rows=1010 loops=1)
+         Sort Key: store_sales.store_sk
+         Sort Method: quicksort  Memory: 543kB
+         ->  Hash Join  (cost=187805.02..295243.77 rows=1838 width=240) (actual time=1675.272..1825.105 rows=1017 loops=1)
+               Hash Cond: ((store_sales.item_sk)::double precision = promotion.item_sk)
+               ->  Merge Join  (cost=184228.37..190353.87 rows=15980 width=212) (actual time=1651.781..1768.889 rows=46590 loops=1)
+                     Merge Cond: (store_sales.customer_sk = ((customer.customer_sk)::double precision))
+                     ->  Sort  (cost=134275.31..134346.34 rows=28412 width=184) (actual time=1639.654..1710.027 rows=293081 loops=1)
+                           Sort Key: store_sales.customer_sk
+                           Sort Method: external merge  Disk: 58656kB
+                           ->  Hash Join  (cost=4108.36..129646.68 rows=28412 width=184) (actual time=102.048..1384.162 rows=300171 loops=1)
+                                 Hash Cond: (store_sales.item_sk = item.item_sk)
+                                 ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=180540 width=132) (actual time=0.039..739.941 rows=705115 loops=1)
+                                       Filter: ((net_profit <= '2200.76'::double precision) AND (net_profit >= '-16.08'::double precision))
+                                       Rows Removed by Filter: 2175289
+                                 ->  Hash  (cost=456.00..456.00 rows=164029 width=52) (actual time=42.673..42.674 rows=7654 loops=1)
+                                       Buckets: 65536  Batches: 8  Memory Usage: 598kB
+                                       ->  Seq Scan on item  (cost=0.00..456.00 rows=164029 width=52) (actual time=0.009..5.030 rows=7654 loops=1)
+                                             Filter: ((wholesale_cost <= '5.14'::double precision) AND (wholesale_cost >= '1.7'::double precision))
+                                             Rows Removed by Filter: 10346
+                     ->  Materialize  (cost=49953.06..51990.73 rows=407533 width=28) (actual time=12.114..17.593 rows=49412 loops=1)
+                           ->  Sort  (cost=49953.06..50971.89 rows=407533 width=28) (actual time=12.111..13.197 rows=15904 loops=1)
+                                 Sort Key: ((customer.customer_sk)::double precision)
+                                 Sort Method: quicksort  Memory: 1627kB
+                                 ->  Seq Scan on customer  (cost=0.00..2227.00 rows=407533 width=28) (actual time=0.023..9.972 rows=15904 loops=1)
+                                       Filter: ((birth_day <= '22'::double precision) AND (birth_day >= '18'::double precision))
+                                       Rows Removed by Filter: 84096
+               ->  Hash  (cost=7.50..7.50 rows=184572 width=28) (actual time=15.600..15.600 rows=291 loops=1)
+                     Buckets: 65536  Batches: 4  Memory Usage: 517kB
+                     ->  Seq Scan on promotion  (cost=0.00..7.50 rows=184572 width=28) (actual time=0.022..0.133 rows=294 loops=1)
+                           Filter: ((cost <= '1000'::double precision) AND (cost >= '1000'::double precision))
+                           Rows Removed by Filter: 6
+   ->  Materialize  (cost=35825.35..37379.54 rows=310838 width=32) (actual time=0.027..0.044 rows=361 loops=1)
+         ->  Sort  (cost=35825.35..36602.44 rows=310838 width=32) (actual time=0.025..0.025 rows=3 loops=1)
+               Sort Key: ((store.store_sk)::double precision)
+               Sort Method: quicksort  Memory: 25kB
+               ->  Seq Scan on store  (cost=0.00..30.40 rows=310838 width=32) (actual time=0.016..0.019 rows=3 loops=1)
+                     Filter: ((floor_space <= 9341467) AND (floor_space >= 9294113))
+                     Rows Removed by Filter: 9
+ Planning Time: 408.003 ms
+ Execution Time: 1837.121 ms
+(43 rows)
+
+                                                                        QUERY PLAN                                                                         
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+ Merge Join  (cost=511060.62..1039070.35 rows=2501 width=272) (actual time=1821.673..1823.081 rows=1653 loops=1)
+   Merge Cond: (store_sales.store_sk = ((store.store_sk)::double precision))
+   ->  Sort  (cost=388861.52..388877.40 rows=6355 width=240) (actual time=1821.635..1821.891 rows=2670 loops=1)
+         Sort Key: store_sales.store_sk
+         Sort Method: quicksort  Memory: 1756kB
+         ->  Hash Join  (cost=223552.04..388460.05 rows=6355 width=240) (actual time=1551.728..1819.486 rows=3279 loops=1)
+               Hash Cond: ((store_sales.item_sk)::double precision = promotion.item_sk)
+               ->  Merge Join  (cost=219975.39..232241.14 rows=24179 width=212) (actual time=1532.984..1700.162 rows=140162 loops=1)
+                     Merge Cond: (store_sales.customer_sk = ((customer.customer_sk)::double precision))
+                     ->  Sort  (cost=146539.88..146695.20 rows=62129 width=184) (actual time=1505.539..1577.668 rows=291633 loops=1)
+                           Sort Key: store_sales.customer_sk
+                           Sort Method: external merge  Disk: 58376kB
+                           ->  Hash Join  (cost=7389.19..136070.45 rows=62129 width=184) (actual time=112.272..1250.779 rows=298833 loops=1)
+                                 Hash Cond: (store_sales.item_sk = item.item_sk)
+                                 ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=119959 width=132) (actual time=0.040..641.422 rows=595396 loops=1)
+                                       Filter: ((ext_wholesale_cost <= '3748.68'::double precision) AND (ext_wholesale_cost >= '2044'::double precision))
+                                       Rows Removed by Filter: 2285008
+                                 ->  Hash  (cost=456.00..456.00 rows=311375 width=52) (actual time=30.673..30.674 rows=9026 loops=1)
+                                       Buckets: 65536  Batches: 8  Memory Usage: 615kB
+                                       ->  Seq Scan on item  (cost=0.00..456.00 rows=311375 width=52) (actual time=0.008..3.752 rows=9026 loops=1)
+                                             Filter: ((category_id <= '7'::double precision) AND (category_id >= '3'::double precision))
+                                             Rows Removed by Filter: 8974
+                     ->  Materialize  (cost=73435.50..76406.62 rows=594224 width=28) (actual time=27.434..46.287 rows=148785 loops=1)
+                           ->  Sort  (cost=73435.50..74921.06 rows=594224 width=28) (actual time=27.430..33.582 rows=48009 loops=1)
+                                 Sort Key: ((customer.customer_sk)::double precision)
+                                 Sort Method: external merge  Disk: 2344kB
+                                 ->  Seq Scan on customer  (cost=0.00..2227.00 rows=594224 width=28) (actual time=0.020..12.662 rows=48009 loops=1)
+                                       Filter: ((birth_day <= '15'::double precision) AND (birth_day >= '1'::double precision))
+                                       Rows Removed by Filter: 51991
+               ->  Hash  (cost=7.50..7.50 rows=184572 width=28) (actual time=12.516..12.516 rows=291 loops=1)
+                     Buckets: 65536  Batches: 4  Memory Usage: 517kB
+                     ->  Seq Scan on promotion  (cost=0.00..7.50 rows=184572 width=28) (actual time=0.021..0.108 rows=294 loops=1)
+                           Filter: ((cost <= '1000'::double precision) AND (cost >= '1000'::double precision))
+                           Rows Removed by Filter: 6
+   ->  Materialize  (cost=122199.11..127145.00 rows=989178 width=32) (actual time=0.029..0.122 rows=1655 loops=1)
+         ->  Sort  (cost=122199.11..124672.05 rows=989178 width=32) (actual time=0.027..0.027 rows=5 loops=1)
+               Sort Key: ((store.store_sk)::double precision)
+               Sort Method: quicksort  Memory: 25kB
+               ->  Seq Scan on store  (cost=0.00..30.40 rows=989178 width=32) (actual time=0.016..0.019 rows=5 loops=1)
+                     Filter: ((number_employees <= 278) AND (number_employees >= 236))
+                     Rows Removed by Filter: 7
+ Planning Time: 440.906 ms
+ Execution Time: 1834.673 ms
+(43 rows)
+
+                                                                           QUERY PLAN                                                                           
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Hash Join  (cost=1130344.00..1658494.78 rows=3745 width=272) (actual time=732.339..757.047 rows=3796 loops=1)
+   Hash Cond: (store_sales.wholesale_cost = item.wholesale_cost)
+   ->  Merge Join  (cost=1126502.69..1652294.77 rows=3001 width=220) (actual time=709.594..719.808 rows=17273 loops=1)
+         Merge Cond: (store_sales.store_sk = ((store.store_sk)::double precision))
+         ->  Sort  (cost=774518.52..774525.30 rows=2713 width=188) (actual time=709.572..711.865 rows=17274 loops=1)
+               Sort Key: store_sales.store_sk
+               Sort Method: external merge  Disk: 3568kB
+               ->  Merge Join  (cost=217618.94..774363.78 rows=2713 width=188) (actual time=686.204..696.396 rows=17394 loops=1)
+                     Merge Cond: (store_sales.promo_sk = ((promotion.promo_sk)::double precision))
+                     ->  Sort  (cost=195259.07..195384.06 rows=49995 width=160) (actual time=686.095..688.553 rows=17808 loops=1)
+                           Sort Key: store_sales.promo_sk
+                           Sort Method: external merge  Disk: 3120kB
+                           ->  Merge Join  (cost=172893.25..187426.62 rows=49995 width=160) (actual time=635.830..670.943 rows=18018 loops=1)
+                                 Merge Cond: (store_sales.customer_sk = ((customer.customer_sk)::double precision))
+                                 ->  Sort  (cost=114119.24..114356.98 rows=95096 width=132) (actual time=600.027..602.646 rows=23263 loops=1)
+                                       Sort Key: store_sales.customer_sk
+                                       Sort Method: external merge  Disk: 3344kB
+                                       ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=95096 width=132) (actual time=0.071..583.638 rows=23782 loops=1)
+                                             Filter: ((net_profit <= '-552.96'::double precision) AND (net_profit >= '-581.76'::double precision))
+                                             Rows Removed by Filter: 2856622
+                                 ->  Materialize  (cost=58774.01..61164.71 rows=478140 width=28) (actual time=35.793..52.678 rows=79725 loops=1)
+                                       ->  Sort  (cost=58774.01..59969.36 rows=478140 width=28) (actual time=35.790..43.224 rows=77132 loops=1)
+                                             Sort Key: ((customer.customer_sk)::double precision)
+                                             Sort Method: external merge  Disk: 3760kB
+                                             ->  Seq Scan on customer  (cost=0.00..2227.00 rows=478140 width=28) (actual time=0.012..14.310 rows=77132 loops=1)
+                                                   Filter: ((birth_year <= '1980'::double precision) AND (birth_year >= '1926'::double precision))
+                                                   Rows Removed by Filter: 22868
+                     ->  Materialize  (cost=22359.87..23358.05 rows=199635 width=28) (actual time=0.105..0.996 rows=17339 loops=1)
+                           ->  Sort  (cost=22359.87..22858.96 rows=199635 width=28) (actual time=0.104..0.121 rows=293 loops=1)
+                                 Sort Key: ((promotion.promo_sk)::double precision)
+                                 Sort Method: quicksort  Memory: 47kB
+                                 ->  Seq Scan on promotion  (cost=0.00..7.50 rows=199635 width=28) (actual time=0.015..0.060 rows=293 loops=1)
+                                       Filter: ((response_target <= '1'::double precision) AND (response_target >= '1'::double precision))
+                                       Rows Removed by Filter: 7
+         ->  Materialize  (cost=351984.17..363448.59 rows=2292885 width=32) (actual time=0.017..0.791 rows=17278 loops=1)
+               ->  Sort  (cost=351984.17..357716.38 rows=2292885 width=32) (actual time=0.016..0.017 rows=11 loops=1)
+                     Sort Key: ((store.store_sk)::double precision)
+                     Sort Method: quicksort  Memory: 25kB
+                     ->  Seq Scan on store  (cost=0.00..30.40 rows=2292885 width=32) (actual time=0.008..0.011 rows=12 loops=1)
+                           Filter: ((devision_id <= 1) AND (devision_id >= 1))
+   ->  Hash  (cost=456.00..456.00 rows=152025 width=52) (actual time=16.983..16.983 rows=11261 loops=1)
+         Buckets: 65536  Batches: 4  Memory Usage: 761kB
+         ->  Seq Scan on item  (cost=0.00..456.00 rows=152025 width=52) (actual time=0.021..4.569 rows=11277 loops=1)
+               Filter: ((class_id <= '4'::double precision) AND (class_id >= '1'::double precision))
+               Rows Removed by Filter: 6723
+ Planning Time: 419.416 ms
+ Execution Time: 760.443 ms
+(47 rows)
+
+                                                                    QUERY PLAN                                                                    
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ Hash Join  (cost=118644.23..150442.27 rows=55 width=272) (actual time=786.152..798.256 rows=173 loops=1)
+   Hash Cond: (store_sales.store_sk = (store.store_sk)::double precision)
+   ->  Hash Join  (cost=109825.97..114195.50 rows=180 width=240) (actual time=773.068..784.822 rows=1062 loops=1)
+         Hash Cond: ((customer.customer_sk)::double precision = store_sales.customer_sk)
+         ->  Seq Scan on customer  (cost=0.00..2227.00 rows=425279 width=28) (actual time=0.013..9.326 rows=18994 loops=1)
+               Filter: ((birth_day <= '22'::double precision) AND (birth_day >= '17'::double precision))
+               Rows Removed by Filter: 81006
+         ->  Hash  (cost=109822.98..109822.98 rows=239 width=212) (actual time=773.033..773.036 rows=5373 loops=1)
+               Buckets: 8192 (originally 1024)  Batches: 1 (originally 1)  Memory Usage: 1401kB
+               ->  Hash Join  (cost=9462.39..109822.98 rows=239 width=212) (actual time=6.368..770.152 rows=5523 loops=1)
+                     Hash Cond: (store_sales.item_sk = item.item_sk)
+                     ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=153332 width=132) (actual time=0.040..640.293 rows=1690069 loops=1)
+                           Filter: ((net_paid_inc_tax <= '5081.32'::double precision) AND (net_paid_inc_tax >= '324.32'::double precision))
+                           Rows Removed by Filter: 1190335
+                     ->  Hash  (cost=9457.64..9457.64 rows=380 width=80) (actual time=6.212..6.214 rows=44 loops=1)
+                           Buckets: 1024  Batches: 1  Memory Usage: 14kB
+                           ->  Hash Join  (cost=30.00..9457.64 rows=380 width=80) (actual time=0.193..6.189 rows=44 loops=1)
+                                 Hash Cond: ((item.item_sk)::double precision = promotion.item_sk)
+                                 ->  Seq Scan on item  (cost=0.00..456.00 rows=132106 width=52) (actual time=0.007..4.138 rows=11409 loops=1)
+                                       Filter: ((current_price <= '38.52'::double precision) AND (current_price >= '2.52'::double precision))
+                                       Rows Removed by Filter: 6591
+                                 ->  Hash  (cost=7.50..7.50 rows=1800 width=28) (actual time=0.069..0.070 rows=69 loops=1)
+                                       Buckets: 2048  Batches: 1  Memory Usage: 21kB
+                                       ->  Seq Scan on promotion  (cost=0.00..7.50 rows=1800 width=28) (actual time=0.013..0.051 rows=71 loops=1)
+                                             Filter: ((promo_sk <= 124) AND (promo_sk >= 54))
+                                             Rows Removed by Filter: 229
+   ->  Hash  (cost=30.40..30.40 rows=454469 width=32) (actual time=12.909..12.909 rows=4 loops=1)
+         Buckets: 65536  Batches: 16  Memory Usage: 513kB
+         ->  Seq Scan on store  (cost=0.00..30.40 rows=454469 width=32) (actual time=0.019..0.024 rows=4 loops=1)
+               Filter: ((number_employees <= 294) AND (number_employees >= 288))
+               Rows Removed by Filter: 8
+ Planning Time: 423.476 ms
+ Execution Time: 798.377 ms
+(33 rows)
+
+                                                                           QUERY PLAN                                                                            
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Merge Join  (cost=264072.00..290462.89 rows=3256 width=272) (actual time=716.325..717.932 rows=2568 loops=1)
+   Merge Cond: (store_sales.store_sk = ((store.store_sk)::double precision))
+   ->  Sort  (cost=220933.22..220935.28 rows=823 width=240) (actual time=716.308..716.541 rows=4235 loops=1)
+         Sort Key: store_sales.store_sk
+         Sort Method: quicksort  Memory: 2797kB
+         ->  Merge Join  (cost=189601.14..220893.39 rows=823 width=240) (actual time=711.176..713.952 rows=5089 loops=1)
+               Merge Cond: (store_sales.promo_sk = ((promotion.promo_sk)::double precision))
+               ->  Sort  (cost=167241.27..167248.19 rows=2768 width=212) (actual time=711.064..711.374 rows=5213 loops=1)
+                     Sort Key: store_sales.promo_sk
+                     Sort Method: quicksort  Memory: 1587kB
+                     ->  Hash Join  (cost=138191.08..167083.04 rows=2768 width=212) (actual time=686.028..707.998 rows=5248 loops=1)
+                           Hash Cond: ((customer.customer_sk)::double precision = store_sales.customer_sk)
+                           ->  Seq Scan on customer  (cost=0.00..2227.00 rows=474755 width=28) (actual time=0.016..12.218 rows=69918 loops=1)
+                                 Filter: ((birth_year <= '1973'::double precision) AND (birth_year >= '1924'::double precision))
+                                 Rows Removed by Filter: 30082
+                           ->  Hash  (cost=138099.24..138099.24 rows=7347 width=184) (actual time=685.987..685.989 rows=7526 loops=1)
+                                 Buckets: 8192  Batches: 1  Memory Usage: 1707kB
+                                 ->  Hash Join  (cost=1513.26..138099.24 rows=7347 width=184) (actual time=9.799..682.577 rows=7609 loops=1)
+                                       Hash Cond: (store_sales.wholesale_cost = item.wholesale_cost)
+                                       ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=214576 width=132) (actual time=0.032..577.770 rows=236889 loops=1)
+                                             Filter: ((net_paid <= '2833.14'::double precision) AND (net_paid >= '1998.88'::double precision))
+                                             Rows Removed by Filter: 2643515
+                                       ->  Hash  (cost=456.00..456.00 rows=47461 width=52) (actual time=6.404..6.404 rows=3512 loops=1)
+                                             Buckets: 65536  Batches: 2  Memory Usage: 671kB
+                                             ->  Seq Scan on item  (cost=0.00..456.00 rows=47461 width=52) (actual time=0.008..2.731 rows=3516 loops=1)
+                                                   Filter: ((category_id <= '9'::double precision) AND (category_id >= '8'::double precision))
+                                                   Rows Removed by Filter: 14484
+               ->  Materialize  (cost=22359.87..23358.05 rows=199635 width=28) (actual time=0.104..0.375 rows=5071 loops=1)
+                     ->  Sort  (cost=22359.87..22858.96 rows=199635 width=28) (actual time=0.102..0.119 rows=293 loops=1)
+                           Sort Key: ((promotion.promo_sk)::double precision)
+                           Sort Method: quicksort  Memory: 47kB
+                           ->  Seq Scan on promotion  (cost=0.00..7.50 rows=199635 width=28) (actual time=0.010..0.054 rows=293 loops=1)
+                                 Filter: ((response_target <= '1'::double precision) AND (response_target >= '1'::double precision))
+                                 Rows Removed by Filter: 7
+   ->  Materialize  (cost=43138.78..44990.11 rows=370267 width=32) (actual time=0.012..0.123 rows=2569 loops=1)
+         ->  Sort  (cost=43138.78..44064.44 rows=370267 width=32) (actual time=0.010..0.011 rows=4 loops=1)
+               Sort Key: ((store.store_sk)::double precision)
+               Sort Method: quicksort  Memory: 25kB
+               ->  Seq Scan on store  (cost=0.00..30.40 rows=370267 width=32) (actual time=0.006..0.008 rows=4 loops=1)
+                     Filter: ((floor_space <= 6995995) AND (floor_space >= 5250760))
+                     Rows Removed by Filter: 8
+ Planning Time: 379.618 ms
+ Execution Time: 718.356 ms
+(43 rows)
+
+                                                                    QUERY PLAN                                                                    
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ Hash Join  (cost=185851.64..190026.85 rows=194 width=272) (actual time=770.029..782.043 rows=919 loops=1)
+   Hash Cond: ((customer.customer_sk)::double precision = store_sales.customer_sk)
+   ->  Seq Scan on customer  (cost=0.00..2227.00 rows=388507 width=28) (actual time=0.015..9.187 rows=22481 loops=1)
+         Filter: ((birth_day <= '7'::double precision) AND (birth_day >= '-1'::double precision))
+         Rows Removed by Filter: 77519
+   ->  Hash  (cost=185850.49..185850.49 rows=92 width=244) (actual time=769.953..769.957 rows=3949 loops=1)
+         Buckets: 4096 (originally 1024)  Batches: 1 (originally 1)  Memory Usage: 1142kB
+         ->  Hash Join  (cost=43842.44..185850.49 rows=92 width=244) (actual time=18.676..767.255 rows=3973 loops=1)
+               Hash Cond: (store_sales.store_sk = (store.store_sk)::double precision)
+               ->  Hash Join  (cost=3724.52..103907.91 rows=45 width=212) (actual time=3.764..749.782 rows=4020 loops=1)
+                     Hash Cond: (store_sales.wholesale_cost = item.wholesale_cost)
+                     ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=109833 width=132) (actual time=0.030..630.630 rows=1549423 loops=1)
+                           Filter: ((net_profit <= '196.56'::double precision) AND (net_profit >= '-1354.5'::double precision))
+                           Rows Removed by Filter: 1330981
+                     ->  Hash  (cost=3722.34..3722.34 rows=174 width=80) (actual time=3.215..3.217 rows=21 loops=1)
+                           Buckets: 1024  Batches: 1  Memory Usage: 11kB
+                           ->  Hash Join  (cost=29.75..3722.34 rows=174 width=80) (actual time=1.040..3.207 rows=21 loops=1)
+                                 Hash Cond: ((item.item_sk)::double precision = promotion.item_sk)
+                                 ->  Seq Scan on item  (cost=0.00..456.00 rows=48134 width=52) (actual time=0.006..2.580 rows=5330 loops=1)
+                                       Filter: ((category_id <= '10'::double precision) AND (category_id >= '8'::double precision))
+                                       Rows Removed by Filter: 12670
+                                 ->  Hash  (cost=7.50..7.50 rows=1780 width=28) (actual time=0.048..0.049 rows=59 loops=1)
+                                       Buckets: 2048  Batches: 1  Memory Usage: 20kB
+                                       ->  Seq Scan on promotion  (cost=0.00..7.50 rows=1780 width=28) (actual time=0.015..0.038 rows=61 loops=1)
+                                             Filter: ((promo_sk <= 127) AND (promo_sk >= 67))
+                                             Rows Removed by Filter: 239
+               ->  Hash  (cost=30.40..30.40 rows=2073162 width=32) (actual time=14.829..14.829 rows=12 loops=1)
+                     Buckets: 65536  Batches: 64  Memory Usage: 513kB
+                     ->  Seq Scan on store  (cost=0.00..30.40 rows=2073162 width=32) (actual time=0.004..0.010 rows=12 loops=1)
+                           Filter: ((company_id <= 877) AND (company_id >= 27))
+ Planning Time: 419.019 ms
+ Execution Time: 782.164 ms
+(32 rows)
+
+                                                                           QUERY PLAN                                                                           
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Merge Join  (cost=337002.79..445940.75 rows=1195 width=272) (actual time=1197.535..1199.829 rows=2697 loops=1)
+   Merge Cond: (store_sales.store_sk = ((store.store_sk)::double precision))
+   ->  Sort  (cost=293030.77..293039.33 rows=3426 width=240) (actual time=1197.252..1198.092 rows=7863 loops=1)
+         Sort Key: store_sales.store_sk
+         Sort Method: external merge  Disk: 2056kB
+         ->  Hash Join  (cost=269164.77..292829.61 rows=3426 width=240) (actual time=1163.132..1189.136 rows=7889 loops=1)
+               Hash Cond: ((customer.customer_sk)::double precision = store_sales.customer_sk)
+               ->  Seq Scan on customer  (cost=0.00..2227.00 rows=701776 width=28) (actual time=0.016..9.724 rows=15766 loops=1)
+                     Filter: ((birth_month <= '12'::double precision) AND (birth_month >= '11'::double precision))
+                     Rows Removed by Filter: 84234
+               ->  Hash  (cost=269121.60..269121.60 rows=3454 width=212) (actual time=1158.834..1158.838 rows=49870 loops=1)
+                     Buckets: 16384 (originally 4096)  Batches: 4 (originally 1)  Memory Usage: 3969kB
+                     ->  Merge Join  (cost=181170.55..269121.60 rows=3454 width=212) (actual time=995.097..1131.473 rows=50129 loops=1)
+                           Merge Cond: (store_sales.promo_sk = ((promotion.promo_sk)::double precision))
+                           ->  Sort  (cost=172983.16..173033.73 rows=20225 width=184) (actual time=992.072..1075.252 rows=452709 loops=1)
+                                 Sort Key: store_sales.promo_sk
+                                 Sort Method: external merge  Disk: 95424kB
+                                 ->  Hash Join  (cost=5413.86..169737.70 rows=20225 width=184) (actual time=54.571..643.874 rows=485048 loops=1)
+                                       Hash Cond: (store_sales.wholesale_cost = item.wholesale_cost)
+                                       ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=185061 width=132) (actual time=0.034..456.493 rows=48939 loops=1)
+                                             Filter: ((ext_list_price <= '71.86'::double precision) AND (ext_list_price >= '-1'::double precision))
+                                             Rows Removed by Filter: 2831465
+                                       ->  Hash  (cost=456.00..456.00 rows=222629 width=52) (actual time=23.080..23.080 rows=12557 loops=1)
+                                             Buckets: 65536  Batches: 8  Memory Usage: 651kB
+                                             ->  Seq Scan on item  (cost=0.00..456.00 rows=222629 width=52) (actual time=0.006..3.136 rows=12574 loops=1)
+                                                   Filter: ((category_id <= '10'::double precision) AND (category_id >= '4'::double precision))
+                                                   Rows Removed by Filter: 5426
+                           ->  Materialize  (cost=8187.38..8576.25 rows=77773 width=28) (actual time=0.064..2.289 rows=48758 loops=1)
+                                 ->  Sort  (cost=8187.38..8381.82 rows=77773 width=28) (actual time=0.062..0.067 rows=31 loops=1)
+                                       Sort Key: ((promotion.promo_sk)::double precision)
+                                       Sort Method: quicksort  Memory: 27kB
+                                       ->  Seq Scan on promotion  (cost=0.00..7.50 rows=77773 width=28) (actual time=0.020..0.049 rows=31 loops=1)
+                                             Filter: ((item_sk <= '4194'::double precision) AND (item_sk >= '2862'::double precision))
+                                             Rows Removed by Filter: 269
+   ->  Materialize  (cost=43972.03..45857.05 rows=377005 width=32) (actual time=0.024..0.142 rows=2700 loops=1)
+         ->  Sort  (cost=43972.03..44914.54 rows=377005 width=32) (actual time=0.021..0.022 rows=5 loops=1)
+               Sort Key: ((store.store_sk)::double precision)
+               Sort Method: quicksort  Memory: 25kB
+               ->  Seq Scan on store  (cost=0.00..30.40 rows=377005 width=32) (actual time=0.012..0.014 rows=6 loops=1)
+                     Filter: ((market_id <= 8) AND (market_id >= 6))
+                     Rows Removed by Filter: 6
+ Planning Time: 362.246 ms
+ Execution Time: 1216.301 ms
+(43 rows)
+
+                                                                            QUERY PLAN                                                                            
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Merge Join  (cost=1218243.54..2728232.94 rows=17655 width=272) (actual time=3073.913..3126.024 rows=75185 loops=1)
+   Merge Cond: (store_sales.store_sk = ((store.store_sk)::double precision))
+   ->  Sort  (cost=1127244.09..1127304.33 rows=24094 width=240) (actual time=3064.040..3086.011 rows=112758 loops=1)
+         Sort Key: store_sales.store_sk
+         Sort Method: external merge  Disk: 59072kB
+         ->  Merge Join  (cost=320820.67..1122770.95 rows=24094 width=240) (actual time=2725.895..2876.333 rows=227308 loops=1)
+               Merge Cond: (store_sales.promo_sk = ((promotion.promo_sk)::double precision))
+               ->  Sort  (cost=300251.82..300446.60 rows=77911 width=212) (actual time=2725.758..2773.738 rows=231915 loops=1)
+                     Sort Key: store_sales.promo_sk
+                     Sort Method: external merge  Disk: 53528kB
+                     ->  Merge Join  (cost=267582.98..285931.20 rows=77911 width=212) (actual time=2299.701..2543.094 rows=234847 loops=1)
+                           Merge Cond: (store_sales.customer_sk = ((customer.customer_sk)::double precision))
+                           ->  Sort  (cost=186164.01..186383.95 rows=87977 width=184) (actual time=2271.741..2376.613 rows=460117 loops=1)
+                                 Sort Key: store_sales.customer_sk
+                                 Sort Method: external merge  Disk: 92160kB
+                                 ->  Hash Join  (cost=2771.64..171119.98 rows=87977 width=184) (actual time=17.851..1830.197 rows=471460 loops=1)
+                                       Hash Cond: (store_sales.item_sk = item.item_sk)
+                                       ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=671924 width=132) (actual time=0.039..578.725 rows=2211665 loops=1)
+                                             Filter: ((ext_discount_amt <= '0'::double precision) AND (ext_discount_amt >= '0'::double precision))
+                                             Rows Removed by Filter: 668739
+                                       ->  Hash  (cost=456.00..456.00 rows=103971 width=52) (actual time=10.457..10.459 rows=3835 loops=1)
+                                             Buckets: 65536  Batches: 4  Memory Usage: 596kB
+                                             ->  Seq Scan on item  (cost=0.00..456.00 rows=103971 width=52) (actual time=0.007..2.078 rows=3835 loops=1)
+                                                   Filter: ((current_price <= '2.19'::double precision) AND (current_price >= '0.45'::double precision))
+                                                   Rows Removed by Filter: 14165
+                           ->  Materialize  (cost=81418.98..84703.45 rows=656895 width=28) (actual time=27.944..49.473 rows=241096 loops=1)
+                                 ->  Sort  (cost=81418.98..83061.21 rows=656895 width=28) (actual time=27.940..33.437 rows=50932 loops=1)
+                                       Sort Key: ((customer.customer_sk)::double precision)
+                                       Sort Method: external merge  Disk: 2488kB
+                                       ->  Seq Scan on customer  (cost=0.00..2227.00 rows=656895 width=28) (actual time=0.024..12.484 rows=50932 loops=1)
+                                             Filter: ((birth_day <= '17'::double precision) AND (birth_day >= '2'::double precision))
+                                             Rows Removed by Filter: 49068
+               ->  Materialize  (cost=20568.85..21491.71 rows=184572 width=28) (actual time=0.125..10.332 rows=226538 loops=1)
+                     ->  Sort  (cost=20568.85..21030.28 rows=184572 width=28) (actual time=0.120..0.164 rows=294 loops=1)
+                           Sort Key: ((promotion.promo_sk)::double precision)
+                           Sort Method: quicksort  Memory: 47kB
+                           ->  Seq Scan on promotion  (cost=0.00..7.50 rows=184572 width=28) (actual time=0.022..0.072 rows=294 loops=1)
+                                 Filter: ((cost <= '1000'::double precision) AND (cost >= '1000'::double precision))
+                                 Rows Removed by Filter: 6
+   ->  Materialize  (cost=90999.45..94743.03 rows=748717 width=32) (actual time=0.042..3.396 rows=75187 loops=1)
+         ->  Sort  (cost=90999.45..92871.24 rows=748717 width=32) (actual time=0.038..0.039 rows=4 loops=1)
+               Sort Key: ((store.store_sk)::double precision)
+               Sort Method: quicksort  Memory: 25kB
+               ->  Seq Scan on store  (cost=0.00..30.40 rows=748717 width=32) (actual time=0.023..0.026 rows=4 loops=1)
+                     Filter: ((number_employees <= 236) AND (number_employees >= 218))
+                     Rows Removed by Filter: 8
+ Planning Time: 370.219 ms
+ Execution Time: 3161.808 ms
+(48 rows)
+
+                                                                         QUERY PLAN                                                                         
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Hash Join  (cost=142853.41..147491.78 rows=39 width=272) (actual time=633.525..651.743 rows=9 loops=1)
+   Hash Cond: ((customer.customer_sk)::double precision = store_sales.customer_sk)
+   ->  Seq Scan on customer  (cost=0.00..2227.00 rows=481744 width=28) (actual time=0.016..12.155 rows=78414 loops=1)
+         Filter: ((birth_year <= '1989'::double precision) AND (birth_year >= '1934'::double precision))
+         Rows Removed by Filter: 21586
+   ->  Hash  (cost=142852.97..142852.97 rows=35 width=244) (actual time=633.451..633.454 rows=12 loops=1)
+         Buckets: 1024  Batches: 1  Memory Usage: 12kB
+         ->  Hash Join  (cost=118165.94..142852.97 rows=35 width=244) (actual time=631.608..633.445 rows=12 loops=1)
+               Hash Cond: (store_sales.store_sk = (store.store_sk)::double precision)
+               ->  Hash Join  (cost=109539.98..112196.99 rows=143 width=212) (actual time=626.240..627.972 rows=54 loops=1)
+                     Hash Cond: (item.wholesale_cost = store_sales.wholesale_cost)
+                     ->  Seq Scan on item  (cost=0.00..456.00 rows=109499 width=52) (actual time=0.030..1.739 rows=41 loops=1)
+                           Filter: ((manufact_id <= '315'::double precision) AND (manufact_id >= '315'::double precision))
+                           Rows Removed by Filter: 17959
+                     ->  Hash  (cost=109522.34..109522.34 rows=1411 width=160) (actual time=626.199..626.200 rows=18702 loops=1)
+                           Buckets: 32768 (originally 2048)  Batches: 1 (originally 1)  Memory Usage: 3887kB
+                           ->  Hash Join  (cost=35.20..109522.34 rows=1411 width=160) (actual time=0.113..618.256 rows=19158 loops=1)
+                                 Hash Cond: ((store_sales.item_sk)::double precision = promotion.item_sk)
+                                 ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=118889 width=132) (actual time=0.027..475.151 rows=1531460 loops=1)
+                                       Filter: ((promo_sk <= '167'::double precision) AND (promo_sk >= '1'::double precision))
+                                       Rows Removed by Filter: 1348944
+                                 ->  Hash  (cost=7.50..7.50 rows=2216 width=28) (actual time=0.072..0.073 rows=169 loops=1)
+                                       Buckets: 4096  Batches: 1  Memory Usage: 43kB
+                                       ->  Seq Scan on promotion  (cost=0.00..7.50 rows=2216 width=28) (actual time=0.008..0.047 rows=173 loops=1)
+                                             Filter: ((promo_sk <= 216) AND (promo_sk >= 44))
+                                             Rows Removed by Filter: 127
+               ->  Hash  (cost=30.40..30.40 rows=444525 width=32) (actual time=5.162..5.162 rows=6 loops=1)
+                     Buckets: 65536  Batches: 8  Memory Usage: 513kB
+                     ->  Seq Scan on store  (cost=0.00..30.40 rows=444525 width=32) (actual time=0.005..0.009 rows=6 loops=1)
+                           Filter: ((floor_space <= 9078805) AND (floor_space >= 6995995))
+                           Rows Removed by Filter: 6
+ Planning Time: 396.557 ms
+ Execution Time: 651.829 ms
+(33 rows)
+
+                                                                        QUERY PLAN                                                                         
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+ Merge Join  (cost=445627.69..547863.44 rows=437 width=272) (actual time=1752.883..1753.512 rows=1031 loops=1)
+   Merge Cond: (store_sales.store_sk = ((store.store_sk)::double precision))
+   ->  Sort  (cost=214047.44..214049.36 rows=766 width=240) (actual time=1752.853..1752.937 rows=1530 loops=1)
+         Sort Key: store_sales.store_sk
+         Sort Method: quicksort  Memory: 832kB
+         ->  Hash Join  (cost=177428.53..214010.77 rows=766 width=240) (actual time=1739.908..1751.983 rows=1548 loops=1)
+               Hash Cond: ((customer.customer_sk)::double precision = store_sales.customer_sk)
+               ->  Seq Scan on customer  (cost=0.00..2227.00 rows=683183 width=28) (actual time=0.023..9.761 rows=16089 loops=1)
+                     Filter: ((birth_month <= '11'::double precision) AND (birth_month >= '10'::double precision))
+                     Rows Removed by Filter: 83911
+               ->  Hash  (cost=177405.91..177405.91 rows=1809 width=212) (actual time=1739.827..1739.830 rows=9682 loops=1)
+                     Buckets: 16384 (originally 2048)  Batches: 1 (originally 1)  Memory Usage: 2535kB
+                     ->  Hash Join  (cost=6564.99..177405.91 rows=1809 width=212) (actual time=77.997..1734.801 rows=9920 loops=1)
+                           Hash Cond: ((store_sales.item_sk)::double precision = promotion.item_sk)
+                           ->  Hash Join  (cost=2697.05..109074.28 rows=9336 width=184) (actual time=21.198..1418.083 rows=433934 loops=1)
+                                 Hash Cond: (store_sales.item_sk = item.item_sk)
+                                 ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=57138 width=132) (actual time=0.035..500.582 rows=1512233 loops=1)
+                                       Filter: ((promo_sk <= '251'::double precision) AND (promo_sk >= '87'::double precision))
+                                       Rows Removed by Filter: 1368171
+                                 ->  Hash  (cost=456.00..456.00 rows=100644 width=52) (actual time=21.062..21.063 rows=5162 loops=1)
+                                       Buckets: 65536  Batches: 4  Memory Usage: 628kB
+                                       ->  Seq Scan on item  (cost=0.00..456.00 rows=100644 width=52) (actual time=0.009..5.307 rows=5162 loops=1)
+                                             Filter: ((brand_id <= '9007004'::double precision) AND (brand_id >= '6009001'::double precision))
+                                             Rows Removed by Filter: 12838
+                           ->  Hash  (cost=7.50..7.50 rows=199635 width=28) (actual time=15.156..15.156 rows=291 loops=1)
+                                 Buckets: 65536  Batches: 4  Memory Usage: 517kB
+                                 ->  Seq Scan on promotion  (cost=0.00..7.50 rows=199635 width=28) (actual time=0.010..0.115 rows=293 loops=1)
+                                       Filter: ((response_target <= '1'::double precision) AND (response_target >= '1'::double precision))
+                                       Rows Removed by Filter: 7
+   ->  Materialize  (cost=231580.24..239267.07 rows=1537365 width=32) (actual time=0.022..0.068 rows=1035 loops=1)
+         ->  Sort  (cost=231580.24..235423.66 rows=1537365 width=32) (actual time=0.020..0.020 rows=8 loops=1)
+               Sort Key: ((store.store_sk)::double precision)
+               Sort Method: quicksort  Memory: 25kB
+               ->  Seq Scan on store  (cost=0.00..30.40 rows=1537365 width=32) (actual time=0.009..0.011 rows=9 loops=1)
+                     Filter: ((number_employees <= 294) AND (number_employees >= 236))
+                     Rows Removed by Filter: 3
+ Planning Time: 397.529 ms
+ Execution Time: 1753.681 ms
+(38 rows)
+
+                                                                                  QUERY PLAN                                                                                  
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Merge Join  (cost=2023134.38..3710096.60 rows=13540 width=272) (actual time=4580.342..4583.287 rows=4564 loops=1)
+   Merge Cond: (store_sales.store_sk = ((store.store_sk)::double precision))
+   ->  Sort  (cost=1699159.47..1699183.21 rows=9497 width=240) (actual time=4580.304..4580.717 rows=5501 loops=1)
+         Sort Key: store_sales.store_sk
+         Sort Method: quicksort  Memory: 3011kB
+         ->  Merge Join  (cost=626716.08..1698532.05 rows=9497 width=240) (actual time=4391.683..4576.972 rows=5501 loops=1)
+               Merge Cond: (((promotion.promo_sk)::double precision) = store_sales.promo_sk)
+               ->  Sort  (cost=12068.85..12348.60 rows=111900 width=28) (actual time=0.086..0.088 rows=3 loops=1)
+                     Sort Key: ((promotion.promo_sk)::double precision)
+                     Sort Method: quicksort  Memory: 25kB
+                     ->  Seq Scan on promotion  (cost=0.00..7.50 rows=111900 width=28) (actual time=0.026..0.079 rows=3 loops=1)
+                           Filter: ((item_sk <= '2115'::double precision) AND (item_sk >= '1866'::double precision))
+                           Rows Removed by Filter: 297
+               ->  Materialize  (cost=614647.23..615506.11 rows=171776 width=212) (actual time=4370.510..4522.143 rows=481797 loops=1)
+                     ->  Sort  (cost=614647.23..615076.67 rows=171776 width=212) (actual time=4370.507..4462.637 rows=481797 loops=1)
+                           Sort Key: store_sales.promo_sk
+                           Sort Method: external merge  Disk: 125704kB
+                           ->  Hash Join  (cost=326849.33..582095.69 rows=171776 width=212) (actual time=2424.348..3924.606 rows=550117 loops=1)
+                                 Hash Cond: (store_sales.wholesale_cost = item.wholesale_cost)
+                                 ->  Merge Join  (cost=312240.18..402575.49 rows=214951 width=160) (actual time=2311.989..3331.133 rows=540820 loops=1)
+                                       Merge Cond: (((customer.customer_sk)::double precision) = store_sales.customer_sk)
+                                       ->  Sort  (cost=56385.05..57532.72 rows=459068 width=28) (actual time=27.129..28.692 rows=22493 loops=1)
+                                             Sort Key: ((customer.customer_sk)::double precision)
+                                             Sort Method: quicksort  Memory: 2526kB
+                                             ->  Seq Scan on customer  (cost=0.00..2227.00 rows=459068 width=28) (actual time=0.012..21.094 rows=22493 loops=1)
+                                                   Filter: ((birth_year <= '1943'::double precision) AND (birth_year >= '1928'::double precision))
+                                                   Rows Removed by Filter: 77507
+                                       ->  Materialize  (cost=255855.12..259198.09 rows=668593 width=132) (actual time=2284.851..2969.290 rows=2394179 loops=1)
+                                             ->  Sort  (cost=255855.12..257526.61 rows=668593 width=132) (actual time=2284.847..2666.023 rows=2394179 loops=1)
+                                                   Sort Key: store_sales.customer_sk
+                                                   Sort Method: external merge  Disk: 344920kB
+                                                   ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=668593 width=132) (actual time=0.034..590.204 rows=2452138 loops=1)
+                                                         Filter: ((ext_discount_amt <= '311.19'::double precision) AND (ext_discount_amt >= '0'::double precision))
+                                                         Rows Removed by Filter: 428266
+                                 ->  Hash  (cost=456.00..456.00 rows=635612 width=52) (actual time=83.314..83.315 rows=11663 loops=1)
+                                       Buckets: 65536  Batches: 16  Memory Usage: 581kB
+                                       ->  Seq Scan on item  (cost=0.00..456.00 rows=635612 width=52) (actual time=0.160..4.780 rows=11692 loops=1)
+                                             Filter: ((item_sk <= 12926) AND (item_sk >= 1235))
+                                             Rows Removed by Filter: 6308
+   ->  Materialize  (cost=323974.91..334566.53 rows=2118324 width=32) (actual time=0.032..0.234 rows=4569 loops=1)
+         ->  Sort  (cost=323974.91..329270.72 rows=2118324 width=32) (actual time=0.030..0.031 rows=10 loops=1)
+               Sort Key: ((store.store_sk)::double precision)
+               Sort Method: quicksort  Memory: 25kB
+               ->  Seq Scan on store  (cost=0.00..30.40 rows=2118324 width=32) (actual time=0.017..0.021 rows=11 loops=1)
+                     Filter: ((number_employees <= 297) AND (number_employees >= 229))
+                     Rows Removed by Filter: 1
+ Planning Time: 402.764 ms
+ Execution Time: 4656.354 ms
+(48 rows)
+
+                                                                    QUERY PLAN                                                                     
+---------------------------------------------------------------------------------------------------------------------------------------------------
+ Hash Join  (cost=140073.19..175399.68 rows=116 width=272) (actual time=576.003..587.895 rows=44 loops=1)
+   Hash Cond: (store_sales.store_sk = (store.store_sk)::double precision)
+   ->  Hash Join  (cost=110244.64..114898.00 rows=44 width=240) (actual time=563.536..575.087 rows=54 loops=1)
+         Hash Cond: ((customer.customer_sk)::double precision = store_sales.customer_sk)
+         ->  Seq Scan on customer  (cost=0.00..2227.00 rows=484456 width=28) (actual time=0.009..9.333 rows=31924 loops=1)
+               Filter: ((birth_month <= '4'::double precision) AND (birth_month >= '1'::double precision))
+               Rows Removed by Filter: 68076
+         ->  Hash  (cost=110243.98..110243.98 rows=53 width=212) (actual time=563.121..563.125 rows=147 loops=1)
+               Buckets: 1024  Batches: 1  Memory Usage: 45kB
+               ->  Hash Join  (cost=8771.79..110243.98 rows=53 width=212) (actual time=14.559..563.014 rows=149 loops=1)
+                     Hash Cond: (store_sales.wholesale_cost = item.wholesale_cost)
+                     ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=212664 width=132) (actual time=0.030..491.217 rows=883054 loops=1)
+                           Filter: ((list_price <= '117.88'::double precision) AND (list_price >= '69.72'::double precision))
+                           Rows Removed by Filter: 1997350
+                     ->  Hash  (cost=8764.17..8764.17 rows=609 width=80) (actual time=3.637..3.640 rows=56 loops=1)
+                           Buckets: 1024  Batches: 1  Memory Usage: 15kB
+                           ->  Hash Join  (cost=28.60..8764.17 rows=609 width=80) (actual time=0.081..3.620 rows=56 loops=1)
+                                 Hash Cond: ((item.item_sk)::double precision = promotion.item_sk)
+                                 ->  Seq Scan on item  (cost=0.00..456.00 rows=129059 width=52) (actual time=0.005..2.645 rows=8505 loops=1)
+                                       Filter: ((class_id <= '4'::double precision) AND (class_id >= '2'::double precision))
+                                       Rows Removed by Filter: 9495
+                                 ->  Hash  (cost=7.50..7.50 rows=1688 width=28) (actual time=0.058..0.058 rows=124 loops=1)
+                                       Buckets: 2048  Batches: 1  Memory Usage: 24kB
+                                       ->  Seq Scan on promotion  (cost=0.00..7.50 rows=1688 width=28) (actual time=0.020..0.039 rows=127 loops=1)
+                                             Filter: ((promo_sk <= 267) AND (promo_sk >= 141))
+                                             Rows Removed by Filter: 173
+   ->  Hash  (cost=30.40..30.40 rows=1541052 width=32) (actual time=12.386..12.387 rows=10 loops=1)
+         Buckets: 65536  Batches: 32  Memory Usage: 513kB
+         ->  Seq Scan on store  (cost=0.00..30.40 rows=1541052 width=32) (actual time=0.014..0.019 rows=10 loops=1)
+               Filter: ((market_id <= 8) AND (market_id >= 2))
+               Rows Removed by Filter: 2
+ Planning Time: 400.349 ms
+ Execution Time: 587.973 ms
+(33 rows)
+
+                                                                           QUERY PLAN                                                                            
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Hash Join  (cost=1363582.58..3096818.87 rows=5993 width=272) (actual time=1120.057..1264.306 rows=79658 loops=1)
+   Hash Cond: (store_sales.item_sk = item.item_sk)
+   ->  Merge Join  (cost=1356921.67..3086923.15 rows=2339 width=220) (actual time=1087.370..1139.416 rows=79824 loops=1)
+         Merge Cond: (store_sales.store_sk = ((store.store_sk)::double precision))
+         ->  Sort  (cost=1004937.50..1004959.99 rows=8996 width=188) (actual time=1087.335..1102.036 rows=79825 loops=1)
+               Sort Key: store_sales.store_sk
+               Sort Method: external merge  Disk: 16472kB
+               ->  Merge Join  (cost=220162.36..1004346.67 rows=8996 width=188) (actual time=990.826..1039.397 rows=80304 loops=1)
+                     Merge Cond: (store_sales.promo_sk = ((promotion.promo_sk)::double precision))
+                     ->  Sort  (cost=199593.51..199783.97 rows=76184 width=160) (actual time=990.706..1005.115 rows=81905 loops=1)
+                           Sort Key: store_sales.promo_sk
+                           Sort Method: external merge  Disk: 14376kB
+                           ->  Merge Join  (cost=171261.62..187424.02 rows=76184 width=160) (actual time=812.185..938.145 rows=82946 loops=1)
+                                 Merge Cond: (store_sales.customer_sk = ((customer.customer_sk)::double precision))
+                                 ->  Sort  (cost=117578.66..117870.77 rows=116845 width=132) (actual time=798.689..863.786 rows=373052 loops=1)
+                                       Sort Key: store_sales.customer_sk
+                                       Sort Method: external merge  Disk: 53720kB
+                                       ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=116845 width=132) (actual time=0.036..543.588 rows=382084 loops=1)
+                                             Filter: ((wholesale_cost <= '82.44'::double precision) AND (wholesale_cost >= '68.69'::double precision))
+                                             Rows Removed by Filter: 2498320
+                                 ->  Materialize  (cost=53682.96..55870.26 rows=437461 width=28) (actual time=13.483..20.595 rows=86091 loops=1)
+                                       ->  Sort  (cost=53682.96..54776.61 rows=437461 width=28) (actual time=13.480..14.561 rows=22075 loops=1)
+                                             Sort Key: ((customer.customer_sk)::double precision)
+                                             Sort Method: quicksort  Memory: 2493kB
+                                             ->  Seq Scan on customer  (cost=0.00..2227.00 rows=437461 width=28) (actual time=0.021..10.330 rows=22075 loops=1)
+                                                   Filter: ((birth_day <= '21'::double precision) AND (birth_day >= '15'::double precision))
+                                                   Rows Removed by Filter: 77925
+                     ->  Materialize  (cost=20568.85..21491.71 rows=184572 width=28) (actual time=0.115..3.921 rows=80012 loops=1)
+                           ->  Sort  (cost=20568.85..21030.28 rows=184572 width=28) (actual time=0.113..0.137 rows=294 loops=1)
+                                 Sort Key: ((promotion.promo_sk)::double precision)
+                                 Sort Method: quicksort  Memory: 47kB
+                                 ->  Seq Scan on promotion  (cost=0.00..7.50 rows=184572 width=28) (actual time=0.020..0.068 rows=294 loops=1)
+                                       Filter: ((cost <= '1000'::double precision) AND (cost >= '1000'::double precision))
+                                       Rows Removed by Filter: 6
+         ->  Materialize  (cost=351984.17..363448.59 rows=2292885 width=32) (actual time=0.030..3.744 rows=79829 loops=1)
+               ->  Sort  (cost=351984.17..357716.38 rows=2292885 width=32) (actual time=0.029..0.031 rows=11 loops=1)
+                     Sort Key: ((store.store_sk)::double precision)
+                     Sort Method: quicksort  Memory: 25kB
+                     ->  Seq Scan on store  (cost=0.00..30.40 rows=2292885 width=32) (actual time=0.018..0.021 rows=12 loops=1)
+                           Filter: ((devision_id <= 1) AND (devision_id >= 1))
+   ->  Hash  (cost=456.00..456.00 rows=278633 width=52) (actual time=24.846..24.846 rows=17965 loops=1)
+         Buckets: 65536  Batches: 8  Memory Usage: 712kB
+         ->  Seq Scan on item  (cost=0.00..456.00 rows=278633 width=52) (actual time=0.021..7.235 rows=17965 loops=1)
+               Filter: ((class_id <= '16'::double precision) AND (class_id >= '1'::double precision))
+               Rows Removed by Filter: 35
+ Planning Time: 470.484 ms
+ Execution Time: 1282.199 ms
+(47 rows)
+
+                                                                         QUERY PLAN                                                                         
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Hash Join  (cost=147798.75..152393.84 rows=29 width=272) (actual time=715.842..728.693 rows=155 loops=1)
+   Hash Cond: ((customer.customer_sk)::double precision = store_sales.customer_sk)
+   ->  Seq Scan on customer  (cost=0.00..2227.00 rows=473080 width=28) (actual time=0.023..10.483 rows=25544 loops=1)
+         Filter: ((birth_year <= '1981'::double precision) AND (birth_year >= '1964'::double precision))
+         Rows Removed by Filter: 74456
+   ->  Hash  (cost=147798.30..147798.30 rows=36 width=244) (actual time=715.716..715.719 rows=604 loops=1)
+         Buckets: 1024  Batches: 1  Memory Usage: 178kB
+         ->  Hash Join  (cost=126913.00..147798.30 rows=36 width=244) (actual time=712.452..715.455 rows=611 loops=1)
+               Hash Cond: (store_sales.store_sk = (store.store_sk)::double precision)
+               ->  Hash Join  (cost=118287.03..119907.84 rows=123 width=212) (actual time=702.775..705.265 rows=1884 loops=1)
+                     Hash Cond: (item.item_sk = store_sales.item_sk)
+                     ->  Seq Scan on item  (cost=0.00..456.00 rows=143871 width=52) (actual time=0.008..1.823 rows=2776 loops=1)
+                           Filter: ((manufact_id <= '125'::double precision) AND (manufact_id >= '38'::double precision))
+                           Rows Removed by Filter: 15224
+                     ->  Hash  (cost=118273.62..118273.62 rows=1073 width=160) (actual time=702.688..702.689 rows=12711 loops=1)
+                           Buckets: 16384 (originally 2048)  Batches: 1 (originally 1)  Memory Usage: 2581kB
+                           ->  Hash Join  (cost=33.17..118273.62 rows=1073 width=160) (actual time=0.186..697.329 rows=12711 loops=1)
+                                 Hash Cond: ((store_sales.item_sk)::double precision = promotion.item_sk)
+                                 ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=241862 width=132) (actual time=0.033..584.432 rows=1227980 loops=1)
+                                       Filter: ((ext_tax <= '94.24'::double precision) AND (ext_tax >= '7.56'::double precision))
+                                       Rows Removed by Filter: 1652424
+                                 ->  Hash  (cost=7.50..7.50 rows=2054 width=28) (actual time=0.068..0.069 rows=142 loops=1)
+                                       Buckets: 4096  Batches: 1  Memory Usage: 41kB
+                                       ->  Seq Scan on promotion  (cost=0.00..7.50 rows=2054 width=28) (actual time=0.008..0.044 rows=144 loops=1)
+                                             Filter: ((promo_sk <= 162) AND (promo_sk >= 19))
+                                             Rows Removed by Filter: 156
+               ->  Hash  (cost=30.40..30.40 rows=444525 width=32) (actual time=9.570..9.571 rows=6 loops=1)
+                     Buckets: 65536  Batches: 8  Memory Usage: 513kB
+                     ->  Seq Scan on store  (cost=0.00..30.40 rows=444525 width=32) (actual time=0.008..0.014 rows=6 loops=1)
+                           Filter: ((floor_space <= 9078805) AND (floor_space >= 6995995))
+                           Rows Removed by Filter: 6
+ Planning Time: 416.974 ms
+ Execution Time: 728.824 ms
+(33 rows)
+
+                                                                        QUERY PLAN                                                                        
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+ Hash Join  (cost=158288.12..369604.67 rows=295 width=272) (actual time=712.677..727.472 rows=1436 loops=1)
+   Hash Cond: (store_sales.store_sk = (store.store_sk)::double precision)
+   ->  Hash Join  (cost=113921.65..119703.06 rows=278 width=240) (actual time=693.647..707.599 rows=1458 loops=1)
+         Hash Cond: ((customer.customer_sk)::double precision = store_sales.customer_sk)
+         ->  Seq Scan on customer  (cost=0.00..2227.00 rows=470669 width=28) (actual time=0.009..10.591 rows=27977 loops=1)
+               Filter: ((birth_year <= '1974'::double precision) AND (birth_year >= '1955'::double precision))
+               Rows Removed by Filter: 72023
+         ->  Hash  (cost=113917.57..113917.57 rows=327 width=212) (actual time=693.630..693.632 rows=5247 loops=1)
+               Buckets: 8192 (originally 1024)  Batches: 1 (originally 1)  Memory Usage: 1370kB
+               ->  Hash Join  (cost=110917.52..113917.57 rows=327 width=212) (actual time=687.613..691.818 rows=5361 loops=1)
+                     Hash Cond: (item.item_sk = store_sales.item_sk)
+                     ->  Seq Scan on item  (cost=0.00..456.00 rows=329835 width=52) (actual time=0.005..2.075 rows=7219 loops=1)
+                           Filter: ((category_id <= '6'::double precision) AND (category_id >= '3'::double precision))
+                           Rows Removed by Filter: 10781
+                     ->  Hash  (cost=110912.72..110912.72 rows=384 width=160) (actual time=687.595..687.597 rows=12536 loops=1)
+                           Buckets: 16384 (originally 1024)  Batches: 1 (originally 1)  Memory Usage: 2547kB
+                           ->  Hash Join  (cost=46.46..110912.72 rows=384 width=160) (actual time=0.189..682.152 rows=12536 loops=1)
+                                 Hash Cond: ((store_sales.item_sk)::double precision = promotion.item_sk)
+                                 ->  Seq Scan on store_sales  (cost=0.00..99753.18 rows=99123 width=132) (actual time=0.030..603.508 rows=819711 loops=1)
+                                       Filter: ((net_profit <= '-251.65'::double precision) AND (net_profit >= '-1440.58'::double precision))
+                                       Rows Removed by Filter: 2060693
+                                 ->  Hash  (cost=7.50..7.50 rows=3117 width=28) (actual time=0.073..0.073 rows=208 loops=1)
+                                       Buckets: 4096  Batches: 1  Memory Usage: 45kB
+                                       ->  Seq Scan on promotion  (cost=0.00..7.50 rows=3117 width=28) (actual time=0.009..0.043 rows=213 loops=1)
+                                             Filter: ((promo_sk <= 265) AND (promo_sk >= 53))
+                                             Rows Removed by Filter: 87
+   ->  Hash  (cost=30.40..30.40 rows=2292885 width=32) (actual time=18.944..18.944 rows=12 loops=1)
+         Buckets: 65536  Batches: 64  Memory Usage: 513kB
+         ->  Seq Scan on store  (cost=0.00..30.40 rows=2292885 width=32) (actual time=0.018..0.026 rows=12 loops=1)
+               Filter: ((devision_id <= 1) AND (devision_id >= 1))
+ Planning Time: 435.180 ms
+ Execution Time: 727.641 ms
+(32 rows)
+

@@ -1,0 +1,84 @@
+                                               QUERY PLAN                                               
+--------------------------------------------------------------------------------------------------------
+ Seq Scan on promotion  (cost=0.00..6.00 rows=300 width=28) (actual time=0.038..0.108 rows=300 loops=1)
+ Planning Time: 0.512 ms
+ Execution Time: 0.196 ms
+(3 rows)
+
+                                                   QUERY PLAN                                                    
+-----------------------------------------------------------------------------------------------------------------
+ Seq Scan on customer  (cost=0.00..1727.00 rows=100000 width=28) (actual time=0.023..21.541 rows=100000 loops=1)
+ Planning Time: 0.093 ms
+ Execution Time: 27.938 ms
+(3 rows)
+
+                                                                                          QUERY PLAN                                                                                           
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Seq Scan on item  (cost=0.00..546.00 rows=481 width=52) (actual time=0.040..5.506 rows=2298 loops=1)
+   Filter: ((current_price <= '4'::double precision) AND (current_price >= '1.93'::double precision) AND (manufact_id <= '335'::double precision) AND (manufact_id >= '53'::double precision))
+   Rows Removed by Filter: 15702
+ Planning Time: 997.980 ms
+ Execution Time: 5.672 ms
+(5 rows)
+
+                                                       QUERY PLAN                                                       
+------------------------------------------------------------------------------------------------------------------------
+ Seq Scan on store_sales  (cost=0.00..99753.18 rows=400742 width=132) (actual time=0.028..672.979 rows=1225607 loops=1)
+   Filter: ((net_profit <= '503.4'::double precision) AND (net_profit >= '-549.94'::double precision))
+   Rows Removed by Filter: 1654797
+ Planning Time: 57.340 ms
+ Execution Time: 720.299 ms
+(5 rows)
+
+                                                                                                                                                                                        QUERY PLAN                                                                                                                                                                                        
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Seq Scan on store_sales  (cost=0.00..142956.36 rows=24757 width=132) (actual time=0.042..809.575 rows=130156 loops=1)
+   Filter: ((sales_price <= '72.77'::double precision) AND (sales_price >= '7.8'::double precision) AND (ext_list_price <= '13422.1'::double precision) AND (ext_list_price >= '1000.22'::double precision) AND (ext_tax <= '7.18'::double precision) AND (ext_tax >= '0'::double precision) AND (ext_coupon_amt <= '0'::double precision) AND (ext_coupon_amt >= '0'::double precision))
+   Rows Removed by Filter: 2750248
+ Planning Time: 71.484 ms
+ Execution Time: 815.931 ms
+(5 rows)
+
+                                               QUERY PLAN                                               
+--------------------------------------------------------------------------------------------------------
+ Seq Scan on promotion  (cost=0.00..6.00 rows=300 width=28) (actual time=0.011..0.041 rows=300 loops=1)
+ Planning Time: 0.082 ms
+ Execution Time: 0.065 ms
+(3 rows)
+
+                                                                                           QUERY PLAN                                                                                           
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Seq Scan on item  (cost=0.00..546.00 rows=200 width=52) (actual time=0.018..2.901 rows=4739 loops=1)
+   Filter: ((current_price <= '6.07'::double precision) AND (current_price >= '1.92'::double precision) AND (category_id <= '10'::double precision) AND (category_id >= '5'::double precision))
+   Rows Removed by Filter: 13261
+ Planning Time: 77.901 ms
+ Execution Time: 3.117 ms
+(5 rows)
+
+                                                   QUERY PLAN                                                   
+----------------------------------------------------------------------------------------------------------------
+ Seq Scan on customer  (cost=0.00..2227.00 rows=123252 width=28) (actual time=0.020..29.153 rows=56090 loops=1)
+   Filter: ((birth_year <= '1978'::double precision) AND (birth_year >= '1939'::double precision))
+   Rows Removed by Filter: 43910
+ Planning Time: 69.220 ms
+ Execution Time: 33.599 ms
+(5 rows)
+
+                                                  QUERY PLAN                                                   
+---------------------------------------------------------------------------------------------------------------
+ Seq Scan on customer  (cost=0.00..2227.00 rows=62112 width=28) (actual time=0.019..15.238 rows=16204 loops=1)
+   Filter: ((birth_month <= '9'::double precision) AND (birth_month >= '8'::double precision))
+   Rows Removed by Filter: 83796
+ Planning Time: 70.380 ms
+ Execution Time: 16.137 ms
+(5 rows)
+
+                                                                                                                                                                                                                                                                                       QUERY PLAN                                                                                                                                                                                                                                                                                        
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Seq Scan on store_sales  (cost=0.00..171758.48 rows=971 width=132) (actual time=0.038..580.198 rows=4255 loops=1)
+   Filter: ((quantity <= '84'::double precision) AND (quantity >= '33'::double precision) AND (sales_price <= '4.5'::double precision) AND (sales_price >= '0'::double precision) AND (ext_discount_amt <= '0'::double precision) AND (ext_discount_amt >= '0'::double precision) AND (ext_sales_price <= '260.4'::double precision) AND (ext_sales_price >= '138.33'::double precision) AND (ext_wholesale_cost <= '4888.19'::double precision) AND (ext_wholesale_cost >= '94.56'::double precision) AND (ext_tax <= '0.48'::double precision) AND (ext_tax >= '0'::double precision))
+   Rows Removed by Filter: 2876149
+ Planning Time: 52.522 ms
+ Execution Time: 580.424 ms
+(5 rows)
+

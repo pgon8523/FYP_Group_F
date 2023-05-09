@@ -1,0 +1,8 @@
+rm -f "/home/fypgf/gui/web/express/app/views/AVG_Comparison.png"
+rm -f "/home/fypgf/gui/web/express/app/views/Planning_Time_Comparison.png"
+rm -f "/home/fypgf/gui/web/express/app/views/Execution_Time_Comparison.png"
+rm -f "/home/fypgf/gui/web/express/app/views/Execution_Time_Comp_Low.png"
+rm -f "/home/fypgf/gui/web/express/app/views/Execution_Time_Comp_High.png"
+rm -f "/home/fypgf/gui/web/express/app/views/Planning_Time_Comp_Low.png"
+rm -f "/home/fypgf/gui/web/express/app/views/Planning_Time_Comp_High.png"
+rm -f "/home/fypgf/gui/web/express/app/views/Q_error_between_PostgreSQL_and_NNGP.png"

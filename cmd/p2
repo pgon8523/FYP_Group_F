@@ -1,0 +1,32 @@
+                                                                              QUERY PLAN                                                                              
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Gather  (cost=90931.76..637890.84 rows=940943 width=52) (actual time=3077.375..5999.935 rows=9515937 loops=1)
+   Workers Planned: 2
+   Workers Launched: 2
+   ->  Parallel Hash Join  (cost=89931.76..542796.54 rows=392060 width=52) (actual time=3072.203..4322.172 rows=3171979 loops=3)
+         Hash Cond: (cast_info.movie_id = title.movie_id)
+         ->  Parallel Seq Scan on cast_info  (cost=0.00..422430.95 rows=7680067 width=12) (actual time=0.043..1367.575 rows=6223934 loops=3)
+               Filter: ((person_role_id <= '-1'::integer) AND (person_role_id >= '-1'::integer))
+               Rows Removed by Filter: 5857173
+         ->  Parallel Hash  (cost=89259.62..89259.62 rows=53771 width=40) (actual time=885.491..885.692 rows=179737 loops=3)
+               Buckets: 65536 (originally 131072)  Batches: 16 (originally 1)  Memory Usage: 3008kB
+               ->  Parallel Hash Join  (cost=54547.76..89259.62 rows=53771 width=40) (actual time=413.309..689.861 rows=179737 loops=3)
+                     Hash Cond: (movie_companies.movie_id = title.movie_id)
+                     ->  Parallel Seq Scan on movie_companies  (cost=0.00..30411.06 rows=1087137 width=12) (actual time=0.038..143.502 rows=869710 loops=3)
+                           Filter: ((company_type_id <= 2) AND (company_type_id >= 1))
+                     ->  Parallel Hash  (cost=53896.54..53896.54 rows=52098 width=28) (actual time=366.777..366.971 rows=54735 loops=3)
+                           Buckets: 262144 (originally 131072)  Batches: 1 (originally 1)  Memory Usage: 13408kB
+                           ->  Parallel Hash Join  (cost=32656.02..53896.54 rows=52098 width=28) (actual time=290.922..343.622 rows=54735 loops=3)
+                                 Hash Cond: (movie_info_idx.movie_id = title.movie_id)
+                                 ->  Parallel Seq Scan on movie_info_idx  (cost=0.00..16085.21 rows=298993 width=12) (actual time=18.485..54.465 rows=239015 loops=3)
+                                       Filter: ((movie_info_idx_id <= 1269931) AND (movie_info_idx_id >= 552888))
+                                       Rows Removed by Filter: 220997
+                                 ->  Parallel Hash  (cost=29464.81..29464.81 rows=183537 width=16) (actual time=134.788..134.790 rows=143965 loops=3)
+                                       Buckets: 131072  Batches: 8  Memory Usage: 3584kB
+                                       ->  Parallel Seq Scan on title  (cost=0.00..29464.81 rows=183537 width=16) (actual time=0.046..101.891 rows=143965 loops=3)
+                                             Filter: ((product_year <= 1988) AND (product_year >= 1959))
+                                             Rows Removed by Filter: 698691
+ Planning Time: 0.451 ms
+ Execution Time: 6350.209 ms
+(28 rows)
+

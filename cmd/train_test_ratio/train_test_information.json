@@ -1,0 +1,1 @@
+{"relation_name":["TPCDS"],"train_test_ratio":{"train":[0.9],"test":[0.1]},"non_join_query_ratio":{"join":[0.9],"non_join":[0.1]},"min_max":{"min":[1],"max":[4]}}
