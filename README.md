@@ -37,7 +37,7 @@ Here are the steps to run the project locally.
 3. Run the project
 
    ```bash
-   cd ../express
+   cd express
    node server.js
    ```
 
