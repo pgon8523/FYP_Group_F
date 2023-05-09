@@ -43,6 +43,12 @@ Here are the steps to run the project locally.
    node server.js
    ```
 
+4. Datapath and NNGP Server
+   ```bash
+   the File FYP-NNGP-PG contains the data used in this project
+   and the server program. You may change accordinly to fit your need 
+   ```
+
 ## Groupmates
 
 LAM, Ka Wing 1155144610
