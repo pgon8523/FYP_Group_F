@@ -23,7 +23,7 @@ Here are the steps to run the project locally.
 1. Clone the repository
 
    ```bash
-   git clone https://github.com/Rocky4869/twitter-project.git
+   git clone https://github.com/Rocky4869/twitter-project.git](https://github.com/samlam67812/FYP_Group_F.git
    ```
 
 2. Install dependencies
@@ -32,6 +32,8 @@ Here are the steps to run the project locally.
    cd moz-todo-vue
    npm i
    npm run build
+   
+   
    ```
 
 3. Run the project
