@@ -1,6 +1,6 @@
 # FYP_Group_F
 
-This is the source code and data for final year project of seem 4999 Group F in the 2022-2023 2nd semester: Deep Learning in Databases
+This is the source code and data for final year project of seem 4999 Group F in the 2022-2023 2nd semester: Deep Learning in Databases. As the original development is built on top of the department server, configuartion like datapath maybe need to be changed manually.
 
 
 ## Overview ☁
