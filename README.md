@@ -15,7 +15,6 @@ In this project, we created a web application that aims to provide a researchers
 - Random Query Generation
 - Users can see all users and the trending list
 
-
 ## Development 💻
 
 Here are the steps to run the project locally.
